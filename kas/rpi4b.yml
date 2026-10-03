@@ -1,0 +1,26 @@
+header:
+  version: 14
+  includes:
+    # In-repository include paths are relative to the repository root.
+    - boards/rpi4b/kas.yml
+
+build_system: oe
+
+repos:
+  poky:
+    url: https://git.yoctoproject.org/poky
+    branch: scarthgap
+    commit: 3a3d07f625aee7b87ea1026526b756447c357652
+    layers:
+      meta:
+      meta-poky:
+      meta-yocto-bsp:
+
+  meta-raspberrypi:
+    url: https://github.com/agherzan/meta-raspberrypi.git
+    branch: scarthgap
+    commit: 6ca1f75017cc5d5acdb8bb05634c4bc01fa049fd
+
+  yocto-platforms:
+    layers:
+      layers/meta-jamesc:

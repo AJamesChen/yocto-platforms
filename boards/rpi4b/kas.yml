@@ -1,0 +1,24 @@
+header:
+  version: 14
+
+machine: raspberrypi4-64
+distro: poky
+target: core-image-base
+
+local_conf_header:
+  rpi4b-hardware: |
+    # Include the firmware needed by the board's Wi-Fi/Bluetooth chipset.
+    LICENSE_FLAGS_ACCEPTED += "synaptics-killswitch"
+
+    ENABLE_UART = "1"
+    ENABLE_I2C = "1"
+    ENABLE_SPI_BUS = "1"
+
+  development: |
+    # Development convenience only; remove for production images.
+    EXTRA_IMAGE_FEATURES += "debug-tweaks ssh-server-openssh"
+
+  shared-cache: |
+    # Keep downloads and sstate outside TMPDIR so clean builds can reuse them.
+    DL_DIR = "${TOPDIR}/../downloads"
+    SSTATE_DIR = "${TOPDIR}/../sstate-cache"

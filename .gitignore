@@ -51,5 +51,37 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
+# Yocto/Kas build output and downloaded sources
+/build/
+/build-*/
+/downloads/
+/sstate-cache/
+/sources/
+/deploy/
+/tmp/
+/cache/
+/attestation/
+/.kas_*
+/.config.yaml
+/bitbake-cookerdaemon.log
+/bitbake.lock
+/bitbake.sock
+/pseudodone
+*.wic
+*.wic.bmap
+*.wic.bz2
+*.ext3
+*.manifest
+*.spdx.tar.zst
+*.testdata.json
+
+# Python and local development tools
+__pycache__/
+*.py[cod]
+.venv/
+.idea/
+.vscode/
+*.swp
+
 # debug information files
 *.dwo
