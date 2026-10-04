@@ -3,7 +3,9 @@ header:
 
 machine: raspberrypi4-64
 distro: poky
-target: core-image-base
+target:
+  - core-image-jamesc
+  - rpi4-update-bundle
 
 local_conf_header:
   rpi4b-hardware: |
@@ -13,6 +15,17 @@ local_conf_header:
     ENABLE_UART = "1"
     ENABLE_I2C = "1"
     ENABLE_SPI_BUS = "1"
+
+    # Use U-Boot as RAUC's A/B boot chooser. The chosen rootfs is appended by
+    # boot.cmd, so meta-raspberrypi must not bake a fixed root= into cmdline.txt.
+    RPI_USE_U_BOOT = "1"
+    CMDLINE_ROOTFS = ""
+
+  rauc-ab-update: |
+    DISTRO_FEATURES:append = " rauc"
+    WKS_FILE = "rpi4-ab.wks.in"
+    IMAGE_FSTYPES = "ext4 wic.bz2 wic.bmap"
+    IMAGE_ROOTFS_EXTRA_SPACE = "262144"
 
   development: |
     # Development convenience only; remove for production images.

@@ -8,12 +8,14 @@ planned.
 
 The Raspberry Pi configuration builds Yocto Project Scarthgap for the
 `raspberrypi4-64` machine. The upstream repositories are pinned to the exact
-revisions used by the verified `core-image-base` build:
+revisions used by the verified base build. The RAUC integration follows the
+maintained `scarthgap` branch of `meta-rauc`:
 
 | Repository | Branch | Commit |
 | --- | --- | --- |
 | Poky | `scarthgap` | `3a3d07f625aee7b87ea1026526b756447c357652` |
 | meta-raspberrypi | `scarthgap` | `6ca1f75017cc5d5acdb8bb05634c4bc01fa049fd` |
+| meta-rauc | `scarthgap` | `d63878f20eba7a85ecf53566e7a3377e78bb46ac` |
 
 Kas acts as the build manifest and orchestration tool. It checks out the pinned
 repositories, generates `local.conf` and `bblayers.conf`, and invokes BitBake.
@@ -73,7 +75,7 @@ Prepare the source repositories and generated Yocto configuration:
 ./scripts/setup-rpi4b.sh
 ```
 
-Build the default `core-image-base` image:
+Build the default project image:
 
 ```sh
 ./scripts/build-rpi4b.sh
@@ -83,11 +85,12 @@ The first build downloads and compiles the complete toolchain and target image,
 so it can take considerable time. Later builds reuse `downloads` and
 `sstate-cache` under `build/rpi4b/`.
 
-To build the project image, which currently extends `core-image-base` without
-additional packages:
+The project image extends `core-image-base` with RAUC, U-Boot environment tools,
+the kernel in each rootfs, and a boot-success service. To build only the
+original upstream image instead:
 
 ```sh
-./scripts/build-rpi4b.sh core-image-jamesc
+./scripts/build-rpi4b.sh core-image-base
 ```
 
 Any other BitBake target can be passed as the sole argument:
@@ -104,10 +107,10 @@ Deployable artifacts are written to:
 build/rpi4b/build/tmp/deploy/images/raspberrypi4-64/
 ```
 
-The compressed SD-card image is:
+The compressed A/B SD-card image is:
 
 ```text
-core-image-base-raspberrypi4-64.rootfs.wic.bz2
+core-image-jamesc-raspberrypi4-64.rootfs.wic.bz2
 ```
 
 The matching `.wic.bmap` file can be used with `bmaptool` when writing the image
@@ -125,6 +128,7 @@ Commands such as these can then be run directly:
 
 ```sh
 bitbake core-image-base
+bitbake rpi4-update-bundle
 bitbake-layers show-layers
 bitbake -e core-image-base
 ```
@@ -158,7 +162,9 @@ tracked by Git.
 ## Configuration notes
 
 The board configuration enables UART, I2C, SPI, Wi-Fi/Bluetooth firmware,
-OpenSSH, and Yocto `debug-tweaks`.
+OpenSSH, Yocto `debug-tweaks`, and rootfs-only RAUC A/B updates. See
+[Raspberry Pi 4 A/B OTA with RAUC](docs/ota-rauc.md) for the partition layout,
+build and installation procedure, rollback test, and production signing notes.
 
 `debug-tweaks` permits development-oriented access, including an empty root
 password. Remove `debug-tweaks` and review the SSH configuration in

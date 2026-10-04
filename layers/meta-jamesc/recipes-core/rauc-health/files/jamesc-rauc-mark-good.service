@@ -1,0 +1,15 @@
+[Unit]
+Description=Confirm the current RAUC slot after a successful boot
+ConditionKernelCommandLine=|rauc.slot
+After=boot-complete.target local-fs.target rauc.service
+Requires=boot-complete.target
+Wants=rauc.service
+DefaultDependencies=no
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/rauc-mark-good
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

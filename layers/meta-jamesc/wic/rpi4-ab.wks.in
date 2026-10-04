@@ -1,0 +1,9 @@
+# Raspberry Pi firmware/U-Boot, two identical initial rootfs slots, and state
+# that survives rootfs replacement. GPT partition names avoid dependence on
+# Linux's mmc device enumeration.
+part /boot --source bootimg-partition --ondisk mmcblk0 --fstype=vfat --label boot --part-name boot --active --align 4096 --size 256
+part / --source rootfs --ondisk mmcblk0 --fstype=ext4 --label rootfs_A --part-name rootfs-a --align 4096
+part / --source rootfs --ondisk mmcblk0 --fstype=ext4 --label rootfs_B --part-name rootfs-b --align 4096
+part /data --ondisk mmcblk0 --fstype=ext4 --label data --part-name data --align 4096 --fixed-size 512M
+
+bootloader --ptable gpt

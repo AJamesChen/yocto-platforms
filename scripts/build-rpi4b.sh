@@ -5,7 +5,7 @@ script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 project_dir=$(CDPATH= cd -- "${script_dir}/.." && pwd)
 kas_file="${project_dir}/kas/rpi4b.yml"
 build_dir="${project_dir}/build/rpi4b"
-target=${1:-core-image-base}
+target=${1:-core-image-jamesc}
 
 if [ "$#" -gt 1 ]; then
     echo "usage: $0 [bitbake-target]" >&2

@@ -21,6 +21,11 @@ repos:
     branch: scarthgap
     commit: 6ca1f75017cc5d5acdb8bb05634c4bc01fa049fd
 
+  meta-rauc:
+    url: https://github.com/rauc/meta-rauc.git
+    branch: scarthgap
+    commit: d63878f20eba7a85ecf53566e7a3377e78bb46ac
+
   yocto-platforms:
     layers:
       layers/meta-jamesc:
