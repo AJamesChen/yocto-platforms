@@ -4,7 +4,7 @@ LICENSE = "MIT"
 inherit bundle
 
 RAUC_BUNDLE_COMPATIBLE = "jamesc-raspberrypi4-64"
-RAUC_BUNDLE_VERSION = "${DISTRO_VERSION}-${DATETIME}"
+RAUC_BUNDLE_VERSION = "${DISTRO_VERSION}"
 RAUC_BUNDLE_DESCRIPTION = "James C Raspberry Pi 4 root filesystem"
 RAUC_BUNDLE_FORMAT = "verity"
 
