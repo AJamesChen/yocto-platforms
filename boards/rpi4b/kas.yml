@@ -22,6 +22,8 @@ local_conf_header:
     CMDLINE_ROOTFS = ""
 
   rauc-ab-update: |
+    # RAUC's service and the product health/mark-good unit are systemd units.
+    INIT_MANAGER = "systemd"
     DISTRO_FEATURES:append = " rauc"
     WKS_FILE = "rpi4-ab.wks.in"
     IMAGE_FSTYPES = "ext4 wic.bz2 wic.bmap"

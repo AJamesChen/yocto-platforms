@@ -4,6 +4,8 @@ This platform uses RAUC with U-Boot to update the root filesystem safely. An
 update is written to the inactive slot, leaving the running slot untouched. On
 the next boot U-Boot tries the new slot up to three times. If it never reaches
 the health confirmation service, U-Boot falls back to the previous slot.
+The image uses systemd so the RAUC daemon and health confirmation unit run
+during normal startup.
 
 ## Storage layout
 
