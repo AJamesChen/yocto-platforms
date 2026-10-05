@@ -77,6 +77,10 @@ rauc install /tmp/rpi4-update-bundle-raspberrypi4-64.raucb
 reboot
 ```
 
+The image also provides an authenticated REST interface for uploading and
+installing the bundle. See [REST API for system information and OTA
+updates](ota-rest-api.md).
+
 After reboot, verify the selected rootfs and RAUC state:
 
 ```sh

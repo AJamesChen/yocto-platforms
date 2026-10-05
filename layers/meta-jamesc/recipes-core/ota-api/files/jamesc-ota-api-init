@@ -1,0 +1,23 @@
+#!/bin/sh
+set -eu
+
+mkdir -p /data/ota
+chmod 0700 /data/ota
+
+token_is_valid=false
+if [ -s /data/ota/api-token ] &&
+   [ "$(wc -c < /data/ota/api-token)" -eq 65 ] &&
+   [ "$(tr -cd '0123456789abcdef' < /data/ota/api-token | wc -c)" -eq 64 ]; then
+    token_is_valid=true
+fi
+
+if [ "$token_is_valid" != true ]; then
+    umask 077
+    token=$(cat /proc/sys/kernel/random/uuid /proc/sys/kernel/random/uuid | tr -d '\n-')
+    if [ "${#token}" -ne 64 ]; then
+        echo "failed to generate a valid OTA API token" >&2
+        exit 1
+    fi
+    printf '%s\n' "$token" > /data/ota/api-token.tmp
+    mv /data/ota/api-token.tmp /data/ota/api-token
+fi

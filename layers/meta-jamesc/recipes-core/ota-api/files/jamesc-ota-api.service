@@ -1,0 +1,22 @@
+[Unit]
+Description=Authenticated REST API for system information and RAUC updates
+After=network.target rauc.service
+Wants=rauc.service
+RequiresMountsFor=/data
+
+[Service]
+Type=simple
+EnvironmentFile=-/etc/default/jamesc-ota-api
+ExecStartPre=/usr/libexec/jamesc-ota-api-init
+ExecStart=/usr/bin/jamesc-ota-api --bind ${OTA_API_BIND} --port ${OTA_API_PORT} --token-file /data/ota/api-token --upload-dir /data/ota --max-upload ${OTA_API_MAX_UPLOAD}
+Restart=on-failure
+RestartSec=5s
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectHome=yes
+ProtectSystem=strict
+ReadWritePaths=/data
+RestrictAddressFamilies=AF_UNIX AF_INET
+
+[Install]
+WantedBy=multi-user.target

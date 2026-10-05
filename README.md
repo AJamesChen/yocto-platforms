@@ -86,8 +86,9 @@ so it can take considerable time. Later builds reuse `downloads` and
 `sstate-cache` under `build/rpi4b/`.
 
 The project image extends `core-image-base` with RAUC, U-Boot environment tools,
-the kernel in each rootfs, and a boot-success service. To build only the
-original upstream image instead:
+the kernel in each rootfs, a boot-success service, and an authenticated REST API
+for system information and OTA installation. To build only the original
+upstream image instead:
 
 ```sh
 ./scripts/build-rpi4b.sh core-image-base
@@ -165,6 +166,8 @@ The board configuration enables UART, I2C, SPI, Wi-Fi/Bluetooth firmware,
 OpenSSH, Yocto `debug-tweaks`, and rootfs-only RAUC A/B updates. See
 [Raspberry Pi 4 A/B OTA with RAUC](docs/ota-rauc.md) for the partition layout,
 build and installation procedure, rollback test, and production signing notes.
+See [REST API for system information and OTA updates](docs/ota-rest-api.md) for
+the authenticated API and bundle-upload workflow.
 
 `debug-tweaks` permits development-oriented access, including an empty root
 password. Remove `debug-tweaks` and review the SSH configuration in

@@ -7,11 +7,14 @@ require recipes-core/images/core-image-base.bb
 # Keep the kernel in each rootfs slot so it is updated atomically with userspace.
 # U-Boot loads it from /boot in the selected ext4 partition.
 IMAGE_INSTALL:append = " \
+    curl \
     kernel-image \
+    jamesc-ota-api \
     libubootenv-bin \
     rauc \
     rauc-health \
     u-boot-env \
+    util-linux-findmnt \
 "
 
 # U-Boot reads the per-slot copy; do not also place a stale shared kernel on
