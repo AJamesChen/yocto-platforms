@@ -844,7 +844,7 @@ int main(int argc, char **argv)
     }
 
     if (read_text_file(token_file, server.token, sizeof(server.token)) != 0 ||
-        strlen(server.token) < 16) {
+        strlen(server.token) < 12) {
         fprintf(stderr, "failed to read a valid token from %s\n", token_file);
         return EXIT_FAILURE;
     }

@@ -15,11 +15,12 @@ localhost. Leave this command running:
 ssh -4 -N -L 127.0.0.1:18081:127.0.0.1:8080 root@PI_ADDRESS
 ```
 
-In a second host terminal, read the token into a shell variable. Avoid printing
-the token because it grants access to the update API:
+The temporary bearer token is the lowercase Ethernet MAC address with its
+colons removed. The configured MAC address is `DC:A6:32:7C:4E:1E`, so set the
+fixed token in a second host terminal:
 
 ```sh
-TOKEN=$(ssh root@PI_ADDRESS cat /data/ota/api-token)
+TOKEN=dca6327c4e1e
 ```
 
 The image includes `curl`. Older images that do not include it can still be
@@ -33,7 +34,7 @@ The liveness endpoint does not require authentication:
 curl --fail http://127.0.0.1:18081/api/v1/health
 ```
 
-All other endpoints require the generated bearer token.
+All other endpoints require the MAC-address bearer token.
 
 Get system information, including firmware metadata, the active RAUC slot,
 CPU details and load, and memory use:
@@ -139,8 +140,14 @@ front of it. If a trusted development LAN requires direct access, change
 systemctl restart jamesc-ota-api.service
 ```
 
-The token, last successful update time, and uploaded bundle live under
-`/data/ota`, so they survive rootfs slot changes. The first service start
-creates a 64-character random token. The initializer replaces malformed token
-files, including those created by earlier images that used unsupported BusyBox
-`od` options.
+The last successful update time and uploaded bundle live under `/data/ota`, so
+they survive rootfs slot changes. At every service start, the initializer writes
+`OTA_API_TOKEN` from `/etc/default/jamesc-ota-api` to `/data/ota/api-token`;
+this also migrates devices that already have a random token from an earlier
+image.
+
+The token is always stored as 12 lowercase hexadecimal characters without
+separators. Using a MAC address as a bearer token is intended only for temporary
+development use: MAC addresses are easy to discover and provide identification,
+not secret authentication. Replace this scheme with per-device credentials
+before exposing the update service beyond a trusted development environment.

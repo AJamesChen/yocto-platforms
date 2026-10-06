@@ -4,20 +4,29 @@ set -eu
 mkdir -p /data/ota
 chmod 0700 /data/ota
 
-token_is_valid=false
-if [ -s /data/ota/api-token ] &&
-   [ "$(wc -c < /data/ota/api-token)" -eq 65 ] &&
-   [ "$(tr -cd '0123456789abcdef' < /data/ota/api-token | wc -c)" -eq 64 ]; then
-    token_is_valid=true
+token=${OTA_API_TOKEN:-dca6327c4e1e}
+case "$token" in
+    [0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ;;
+    *)
+        echo "OTA_API_TOKEN must be 12 lowercase hexadecimal characters" >&2
+        exit 1
+        ;;
+esac
+
+if [ "$token" = "000000000000" ]; then
+    echo "OTA_API_TOKEN must not be all zeroes" >&2
+    exit 1
 fi
 
-if [ "$token_is_valid" != true ]; then
+current_token=
+if [ -r /data/ota/api-token ]; then
+    current_token=$(cat /data/ota/api-token)
+fi
+
+if [ "$current_token" != "$token" ]; then
     umask 077
-    token=$(cat /proc/sys/kernel/random/uuid /proc/sys/kernel/random/uuid | tr -d '\n-')
-    if [ "${#token}" -ne 64 ]; then
-        echo "failed to generate a valid OTA API token" >&2
-        exit 1
-    fi
     printf '%s\n' "$token" > /data/ota/api-token.tmp
     mv /data/ota/api-token.tmp /data/ota/api-token
 fi
+
+chmod 0600 /data/ota/api-token
