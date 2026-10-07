@@ -97,6 +97,29 @@ fw_printenv BOOT_ORDER BOOT_A_LEFT BOOT_B_LEFT
 it is not mounted, RAUC cannot update `/boot/uboot.env` and will reject the
 installation when marking the target slot non-bootable.
 
+### Upgrade from an image without the `/boot` mount fix
+
+Legacy development images may not mount the FAT partition automatically. On
+such an image, mount it and restore the running slot before installing a
+corrected bundle:
+
+```sh
+mount -t vfat /dev/disk/by-partlabel/boot /boot
+fw_printenv BOOT_ORDER BOOT_A_LEFT BOOT_B_LEFT
+rauc status mark-good
+rauc status
+```
+
+Keep `/boot` mounted while running `rauc install`. Do not reboot until the
+installation succeeds and `fw_printenv BOOT_ORDER` lists the updated inactive
+slot first. The corrected image mounts `/boot` from `/etc/fstab` on subsequent
+boots.
+
+During development, a rootfs slot may generate a different SSH host key on its
+first boot. If SSH reports that the host identity changed immediately after an
+expected slot switch, verify the new fingerprint from a trusted local or
+serial console before replacing the host's `known_hosts` entry.
+
 The health policy initially marks a slot good after `boot-complete.target` when
 `/data` is mounted. Before production, extend
 `rauc-mark-good.sh` to check the streaming service, REST API, MQTT connection,

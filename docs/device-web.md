@@ -19,10 +19,31 @@ Password: jamesc
 ```
 
 The dashboard displays firmware, RAUC slot, CPU, memory, kernel, root device,
-and uptime information. A signed `.raucb` bundle can be uploaded from the
-firmware update panel. The web service forwards system and update requests to
-the loopback-only `jamesc-ota-api`; the OTA bearer token is not sent to the
-browser.
+and uptime information. A signed `.raucb` bundle can be selected or dragged
+onto the firmware update panel. The browser validates the extension, size, and
+single-file selection before upload. The web service forwards system and
+update requests to the loopback-only `jamesc-ota-api`; the OTA bearer token is
+not sent to the browser.
+
+Before starting an update, confirm that RAUC can access the shared U-Boot
+environment:
+
+```sh
+findmnt /boot
+fw_printenv BOOT_ORDER BOOT_A_LEFT BOOT_B_LEFT
+rauc status
+```
+
+Keep the device powered while the page reports `uploading` or `installing`.
+Reboot only after it reports `succeeded`. After reboot, verify the new slot,
+automatic FAT mount, and health confirmation:
+
+```sh
+tr ' ' '\n' </proc/cmdline | grep '^rauc.slot='
+findmnt /boot
+rauc status
+systemctl is-active jamesc-rauc-mark-good.service device-web.service
+```
 
 ## Build and verify
 
