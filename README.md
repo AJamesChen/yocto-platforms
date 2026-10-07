@@ -168,6 +168,8 @@ OpenSSH, Yocto `debug-tweaks`, and rootfs-only RAUC A/B updates. See
 build and installation procedure, rollback test, and production signing notes.
 See [REST API for system information and OTA updates](docs/ota-rest-api.md) for
 the authenticated API and bundle-upload workflow.
+See [Device web console](docs/device-web.md) for the browser dashboard, default
+development login, firmware upload workflow, and service verification.
 
 `debug-tweaks` permits development-oriented access, including an empty root
 password. Remove `debug-tweaks` and review the SSH configuration in

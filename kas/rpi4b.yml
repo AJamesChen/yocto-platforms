@@ -1,8 +1,8 @@
 header:
   version: 14
   includes:
-    # In-repository include paths are relative to the repository root.
-    - boards/rpi4b/kas.yml
+    - repo: yocto-platforms
+      file: boards/rpi4b/kas.yml
 
 build_system: oe
 
@@ -27,5 +27,8 @@ repos:
     commit: d63878f20eba7a85ecf53566e7a3377e78bb46ac
 
   yocto-platforms:
+    # KAS_WORK_DIR is build/rpi4b, so this explicitly locates the project even
+    # when it is checked out as a submodule of another Git repository.
+    path: ../..
     layers:
       layers/meta-jamesc:

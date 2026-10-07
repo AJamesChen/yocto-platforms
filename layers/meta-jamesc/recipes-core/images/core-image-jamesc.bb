@@ -8,6 +8,7 @@ require recipes-core/images/core-image-base.bb
 # U-Boot loads it from /boot in the selected ext4 partition.
 IMAGE_INSTALL:append = " \
     curl \
+    device-web \
     kernel-image \
     jamesc-ota-api \
     libubootenv-bin \
