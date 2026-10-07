@@ -6,7 +6,7 @@ LIC_FILES_CHKSUM = "file://src/${GO_IMPORT}/LICENSE;md5=28ebbb63d463670ad7108315
 
 PV = "1.0+git"
 SRC_URI = "git://github.com/AJamesChen/device-web.git;branch=main;protocol=https"
-SRCREV = "ebbcfe7a7a2e5d016672be45e889e6d955cd1e6a"
+SRCREV = "cf47917db1b16a95aa56b167875fd37b01872006"
 
 GO_IMPORT = "github.com/AJamesChen/device-web"
 GO_INSTALL = "${GO_IMPORT}/cmd/device-web"
