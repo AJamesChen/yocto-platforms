@@ -21,6 +21,8 @@ Although Linux mounts the FAT partition over `/boot` after startup, U-Boot
 reads `boot/Image` directly from the selected rootfs partition. Thus a
 rootfs-only bundle updates the userspace and matching kernel atomically. The
 board DTBs remain shared on the FAT boot partition and are outside OTA scope.
+The FAT mount also exposes `/boot/uboot.env` to `fw_printenv` and `fw_setenv`,
+which RAUC's U-Boot backend uses to select and confirm A/B slots.
 
 The initial SD-card image contains the same rootfs in slots A and B. It is a
 bootstrap image; later deployments use only the much smaller `.raucb` file.
@@ -90,6 +92,10 @@ rauc status
 systemctl status jamesc-rauc-mark-good.service
 fw_printenv BOOT_ORDER BOOT_A_LEFT BOOT_B_LEFT
 ```
+
+`findmnt /boot` must report the FAT partition before installing an update. If
+it is not mounted, RAUC cannot update `/boot/uboot.env` and will reject the
+installation when marking the target slot non-bootable.
 
 The health policy initially marks a slot good after `boot-complete.target` when
 `/data` is mounted. Before production, extend
