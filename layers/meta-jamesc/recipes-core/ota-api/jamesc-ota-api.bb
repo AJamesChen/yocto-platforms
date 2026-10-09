@@ -1,5 +1,5 @@
-SUMMARY = "REST API for system information and RAUC firmware updates"
-DESCRIPTION = "Authenticated HTTP service that reports system state and streams signed RAUC bundles into the inactive slot."
+SUMMARY = "REST API for system information, RAUC updates, and reboot"
+DESCRIPTION = "Authenticated HTTP service that reports system state, streams signed RAUC bundles into the inactive slot, and requests an orderly reboot."
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
@@ -11,7 +11,7 @@ SRC_URI = " \
 "
 
 DEPENDS = "libmicrohttpd"
-RDEPENDS:${PN} = "rauc"
+RDEPENDS:${PN} = "rauc systemd"
 
 inherit pkgconfig systemd
 

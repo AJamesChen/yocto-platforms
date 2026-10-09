@@ -26,6 +26,7 @@ extern char **environ;
 #define DEFAULT_BIND "127.0.0.1"
 #define DEFAULT_PORT 8080
 #define DEFAULT_RAUC_BIN "/usr/bin/rauc"
+#define DEFAULT_SYSTEMCTL_BIN "/usr/bin/systemctl"
 #define DEFAULT_TOKEN_FILE "/data/ota/api-token"
 #define DEFAULT_UPLOAD_DIR "/data/ota"
 #define DEFAULT_MAX_UPLOAD (384ULL * 1024ULL * 1024ULL)
@@ -53,6 +54,7 @@ struct server_state {
     pid_t installer_pid;
     int installer_exit;
     bool upload_active;
+    bool reboot_pending;
 };
 
 struct request_state {
@@ -541,6 +543,68 @@ static enum MHD_Result update_status_response(struct MHD_Connection *connection,
     return queue_json(connection, MHD_HTTP_OK, json);
 }
 
+static void *reboot_worker(void *argument)
+{
+    struct server_state *server = argument;
+    struct timespec delay = {.tv_sec = 2, .tv_nsec = 0};
+    char *argv[] = {"systemctl", "reboot", NULL};
+    pid_t pid;
+    pid_t waited;
+    int status;
+    int spawn_result;
+
+    while (nanosleep(&delay, &delay) != 0 && errno == EINTR)
+        ;
+    spawn_result = posix_spawn(&pid, DEFAULT_SYSTEMCTL_BIN, NULL, NULL, argv,
+                               environ);
+    if (spawn_result == 0) {
+        do {
+            waited = waitpid(pid, &status, 0);
+        } while (waited < 0 && errno == EINTR);
+        if (waited == pid && WIFEXITED(status) && WEXITSTATUS(status) == 0)
+            return NULL;
+    }
+
+    fprintf(stderr, "failed to request reboot: %s\n",
+            spawn_result != 0 ? strerror(spawn_result) : "systemctl failed");
+    pthread_mutex_lock(&server->lock);
+    server->reboot_pending = false;
+    pthread_mutex_unlock(&server->lock);
+    return NULL;
+}
+
+static enum MHD_Result reboot_response(struct MHD_Connection *connection,
+                                       struct server_state *server)
+{
+    pthread_t thread;
+    bool busy;
+    bool pending;
+
+    pthread_mutex_lock(&server->lock);
+    busy = server->upload_active || server->phase == UPDATE_INSTALLING;
+    pending = server->reboot_pending;
+    if (!busy && !pending)
+        server->reboot_pending = true;
+    pthread_mutex_unlock(&server->lock);
+
+    if (busy)
+        return queue_json(connection, MHD_HTTP_CONFLICT,
+                          "{\"error\":\"firmware update is active\"}\n");
+    if (pending)
+        return queue_json(connection, MHD_HTTP_ACCEPTED,
+                          "{\"state\":\"rebooting\"}\n");
+    if (pthread_create(&thread, NULL, reboot_worker, server) != 0) {
+        pthread_mutex_lock(&server->lock);
+        server->reboot_pending = false;
+        pthread_mutex_unlock(&server->lock);
+        return queue_json(connection, MHD_HTTP_INTERNAL_SERVER_ERROR,
+                          "{\"error\":\"failed to schedule reboot\"}\n");
+    }
+    pthread_detach(thread);
+    return queue_json(connection, MHD_HTTP_ACCEPTED,
+                      "{\"state\":\"rebooting\"}\n");
+}
+
 static int write_all(int fd, const char *data, size_t size)
 {
     while (size > 0) {
@@ -724,6 +788,10 @@ static enum MHD_Result request_handler(void *cls,
     if (strcmp(method, MHD_HTTP_METHOD_GET) == 0 &&
         strcmp(url, "/api/v1/update") == 0)
         return update_status_response(connection, server);
+
+    if (strcmp(method, MHD_HTTP_METHOD_POST) == 0 &&
+        strcmp(url, "/api/v1/reboot") == 0)
+        return reboot_response(connection, server);
 
     if (request->upload) {
         if (request->error_status == MHD_HTTP_CONFLICT) {

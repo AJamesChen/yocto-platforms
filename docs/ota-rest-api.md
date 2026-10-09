@@ -115,11 +115,18 @@ After the upload completes, continue polling until the state is `succeeded`.
 RAUC verifies the bundle signature and compatible string before writing the
 inactive slot. A failed verification or installation is reported as `failed`
 with the RAUC process exit code. The update does not reboot the Pi
-automatically. Reboot only after `succeeded`:
+automatically. Reboot only after `succeeded` by sending an authenticated POST:
 
 ```sh
-ssh root@PI_ADDRESS reboot
+curl --fail-with-body -X POST \
+  -H "Authorization: Bearer ${TOKEN}" \
+  http://127.0.0.1:18081/api/v1/reboot
 ```
+
+The endpoint returns HTTP `202` with `{"state":"rebooting"}` and schedules
+an orderly systemd reboot after a two-second delay so the response can reach
+the client. It returns HTTP `409` while a firmware upload or RAUC installation
+is active.
 
 After the Pi comes back, check `/proc/cmdline` for the other `rauc.slot` and
 query `/api/v1/system` again to confirm the running firmware version and slot.

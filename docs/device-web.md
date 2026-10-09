@@ -35,8 +35,17 @@ rauc status
 ```
 
 Keep the device powered while the page reports `uploading` or `installing`.
-Reboot only after it reports `succeeded`. After reboot, verify the new slot,
-automatic FAT mount, and health confirmation:
+The page continues polling the OTA service and reports either successful
+installation or failure with the RAUC exit code. If the browser loses the
+upload response, it checks the authoritative device-side status before showing
+an error, so a completed installation is not reported as a connection failure.
+
+Reboot only after it reports `succeeded`. Use the **Reboot** button in the
+header and confirm the prompt. The web service rejects reboot requests while
+an upload or installation is active, waits for the device to go offline, and
+returns to the login page when the device is reachable again.
+
+After reboot, verify the new slot, automatic FAT mount, and health confirmation:
 
 ```sh
 tr ' ' '\n' </proc/cmdline | grep '^rauc.slot='
