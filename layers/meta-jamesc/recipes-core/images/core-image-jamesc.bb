@@ -11,8 +11,11 @@ IMAGE_INSTALL:append = " \
     device-web \
     kernel-image \
     jamesc-ota-api \
+    libgpiod \
+    libgpiod-tools \
     libubootenv-bin \
     mfrc522-tool \
+    python3 \
     rauc \
     rauc-health \
     u-boot-env \

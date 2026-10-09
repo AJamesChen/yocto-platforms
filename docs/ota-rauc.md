@@ -80,8 +80,15 @@ reboot
 ```
 
 The image also provides an authenticated REST interface for uploading and
-installing the bundle. See [REST API for system information and OTA
-updates](ota-rest-api.md).
+installing the bundle. The helper script creates the required SSH tunnel,
+uploads the default deploy artifact, waits for RAUC, and optionally reboots:
+
+```sh
+./scripts/flash-ota-rpi4b.sh --reboot PI_ADDRESS
+```
+
+See [REST API for system information and OTA updates](ota-rest-api.md) for the
+manual commands and script options.
 
 After reboot, verify the selected rootfs and RAUC state:
 

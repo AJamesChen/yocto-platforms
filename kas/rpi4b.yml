@@ -26,6 +26,13 @@ repos:
     branch: scarthgap
     commit: d63878f20eba7a85ecf53566e7a3377e78bb46ac
 
+  meta-openembedded:
+    url: https://github.com/openembedded/meta-openembedded.git
+    branch: scarthgap
+    commit: 0f00f8b9a21950640da8c5707343e5540133f86e
+    layers:
+      meta-oe:
+
   yocto-platforms:
     # KAS_WORK_DIR is build/rpi4b, so this explicitly locates the project even
     # when it is checked out as a submodule of another Git repository.

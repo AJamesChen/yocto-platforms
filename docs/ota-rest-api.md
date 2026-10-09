@@ -7,6 +7,20 @@ bundle from crossing the network as plaintext.
 
 ## Connect from a development host
 
+The project script performs the complete tunnel, upload, status polling, and
+optional reboot workflow. First build the signed update bundle, then run:
+
+```sh
+./scripts/build-rpi4b.sh rpi4-update-bundle
+./scripts/flash-ota-rpi4b.sh --reboot PI_ADDRESS
+```
+
+By default the script reads the development OTA token from the device over SSH.
+Pass `--token TOKEN` (or set `OTA_API_TOKEN`) when that is not appropriate. Run
+`./scripts/flash-ota-rpi4b.sh --help` for bundle, port, and timeout options.
+
+The commands below show the equivalent workflow step by step.
+
 In a host terminal, create an SSH tunnel to the API's loopback address on the
 Pi. The explicit IPv4 bind also works on hosts where SSH cannot bind to IPv6
 localhost. Leave this command running:

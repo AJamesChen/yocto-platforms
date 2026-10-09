@@ -16,6 +16,7 @@ maintained `scarthgap` branch of `meta-rauc`:
 | Poky | `scarthgap` | `3a3d07f625aee7b87ea1026526b756447c357652` |
 | meta-raspberrypi | `scarthgap` | `6ca1f75017cc5d5acdb8bb05634c4bc01fa049fd` |
 | meta-rauc | `scarthgap` | `d63878f20eba7a85ecf53566e7a3377e78bb46ac` |
+| meta-openembedded | `scarthgap` | `0f00f8b9a21950640da8c5707343e5540133f86e` |
 
 Kas acts as the build manifest and orchestration tool. It checks out the pinned
 repositories, generates `local.conf` and `bblayers.conf`, and invokes BitBake.
@@ -154,6 +155,8 @@ layers/meta-jamesc/recipes-core/     Project image recipes
 scripts/setup-rpi4b.sh               Checkout and configure the build
 scripts/build-rpi4b.sh               Build an image target
 scripts/shell-rpi4b.sh               Open the configured BitBake shell
+scripts/flash-ota-rpi4b.sh           Upload and install a signed OTA bundle
+scripts/test-hd44780-rpi4b.sh        Exercise an HD44780 LCD through libgpiod
 build/rpi4b/                          Generated sources, caches, and build output
 ```
 
@@ -163,7 +166,9 @@ tracked by Git.
 ## Configuration notes
 
 The board configuration enables UART, I2C, SPI, Wi-Fi/Bluetooth firmware,
-OpenSSH, Yocto `debug-tweaks`, and rootfs-only RAUC A/B updates. See
+OpenSSH, Python 3, libgpiod command-line tools, Yocto `debug-tweaks`, and
+rootfs-only RAUC A/B updates. After booting the image, verify the interpreter
+with `python3 --version` and list GPIO chips with `gpiodetect`. See
 [Raspberry Pi 4 A/B OTA with RAUC](docs/ota-rauc.md) for the partition layout,
 build and installation procedure, rollback test, and production signing notes.
 See [REST API for system information and OTA updates](docs/ota-rest-api.md) for
@@ -172,6 +177,8 @@ See [Device web console](docs/device-web.md) for the browser dashboard, default
 development login, firmware upload workflow, and service verification.
 See [MFRC522 RFID reader](docs/mfrc522.md) for the SPI wiring schematic,
 device-tree integration, and UID/MIFARE Classic read-write commands.
+See [HD44780 character LCD](docs/hd44780.md) for the verified parallel wiring,
+libgpiod test procedure, and GPIO25 sharing restriction.
 
 `debug-tweaks` permits development-oriented access, including an empty root
 password. Remove `debug-tweaks` and review the SSH configuration in
