@@ -16,6 +16,12 @@ local_conf_header:
     ENABLE_I2C = "1"
     ENABLE_SPI_BUS = "1"
 
+    # MFRC522 RFID reader on SPI0 CE0 with reset on GPIO25. The standalone
+    # overlay is copied to the shared FAT boot partition for new WIC images.
+    RPI_EXTRA_CONFIG = "dtoverlay=mfrc522"
+    RPI_EXTRA_IMAGE_BOOT_FILES:append = " mfrc522.dtbo;overlays/mfrc522.dtbo"
+    EXTRA_IMAGEDEPENDS:append = " mfrc522-overlay"
+
     # Use U-Boot as RAUC's A/B boot chooser. The chosen rootfs is appended by
     # boot.cmd, so meta-raspberrypi must not bake a fixed root= into cmdline.txt.
     RPI_USE_U_BOOT = "1"

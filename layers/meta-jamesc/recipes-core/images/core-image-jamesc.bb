@@ -12,6 +12,7 @@ IMAGE_INSTALL:append = " \
     kernel-image \
     jamesc-ota-api \
     libubootenv-bin \
+    mfrc522-tool \
     rauc \
     rauc-health \
     u-boot-env \

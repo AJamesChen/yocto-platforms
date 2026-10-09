@@ -1,0 +1,35 @@
+From 3ab4070c6546703356f33ed16fba676379d3944d Mon Sep 17 00:00:00 2001
+From: James Chen <jamesc@example.com>
+Date: Wed, 7 Oct 2026 14:00:00 +1100
+Subject: [PATCH] spidev: add MFRC522 compatible
+
+The MFRC522 protocol is implemented by the product's userspace utility. Allow
+the board overlay to describe the actual SPI peripheral instead of using a
+generic spidev compatible.
+
+Upstream-Status: Inappropriate [product-specific userspace protocol driver]
+---
+ drivers/spi/spidev.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/spi/spidev.c b/drivers/spi/spidev.c
+index d13c93f88809..934c4f52b443 100644
+--- a/drivers/spi/spidev.c
++++ b/drivers/spi/spidev.c
+@@ -705,6 +705,7 @@ static const struct spi_device_id spidev_spi_ids[] = {
+ 	{ .name = "m53cpld" },
+ 	{ .name = "spi-petra" },
+ 	{ .name = "spi-authenta" },
++	{ .name = "mfrc522" },
+ 	{ .name = "em3581" },
+ 	{ .name = "si3210" },
+ 	{ .name = "spidev" },
+@@ -733,5 +733,6 @@ static const struct of_device_id spidev_dt_ids[] = {
+ 	{ .compatible = "menlo,m53cpld", .data = &spidev_of_check },
+ 	{ .compatible = "micron,spi-authenta", .data = &spidev_of_check },
++	{ .compatible = "nxp,mfrc522", .data = &spidev_of_check },
+ 	{ .compatible = "rohm,bh2228fv", .data = &spidev_of_check },
+ 	{ .compatible = "rohm,dh2228fv", .data = &spidev_of_check },
+ 	{ .compatible = "semtech,sx1301", .data = &spidev_of_check },
+-- 
+2.43.0

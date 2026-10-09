@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="570" viewBox="0 0 1100 570" role="img" aria-labelledby="title desc">
+  <title id="title">MFRC522 to Raspberry Pi 4B wiring schematic</title>
+  <desc id="desc">SPI0 CE0 wiring with reset on GPIO25, 3.3 volt power, and IRQ disconnected.</desc>
+  <style>
+    text { font-family: system-ui, sans-serif; fill: #17201d; }
+    .box { fill: #f7faf8; stroke: #176b4d; stroke-width: 3; rx: 18; }
+    .heading { font-size: 28px; font-weight: 700; }
+    .pin { font-size: 18px; font-weight: 600; }
+    .note { font-size: 17px; fill: #63706a; }
+    .wire { fill: none; stroke-width: 4; }
+  </style>
+  <rect width="1100" height="570" fill="#ffffff"/>
+  <rect class="box" x="55" y="55" width="300" height="450"/>
+  <rect class="box" x="745" y="55" width="300" height="450"/>
+  <text class="heading" x="205" y="100" text-anchor="middle">RFID-RC522</text>
+  <text class="heading" x="895" y="100" text-anchor="middle">Raspberry Pi 4B</text>
+
+  <g class="pin">
+    <text x="300" y="155" text-anchor="end">SDA / SS</text>
+    <text x="300" y="205" text-anchor="end">SCK</text>
+    <text x="300" y="255" text-anchor="end">MOSI</text>
+    <text x="300" y="305" text-anchor="end">MISO</text>
+    <text x="300" y="355" text-anchor="end">IRQ</text>
+    <text x="300" y="405" text-anchor="end">GND</text>
+    <text x="300" y="455" text-anchor="end">RST</text>
+    <text x="300" y="490" text-anchor="end">3.3V</text>
+
+    <text x="800" y="155">Pin 24 · GPIO8 / CE0</text>
+    <text x="800" y="205">Pin 23 · GPIO11 / SCLK</text>
+    <text x="800" y="255">Pin 19 · GPIO10 / MOSI</text>
+    <text x="800" y="305">Pin 21 · GPIO9 / MISO</text>
+    <text x="800" y="355">Not connected</text>
+    <text x="800" y="405">Pin 6 · GND</text>
+    <text x="800" y="455">Pin 22 · GPIO25</text>
+    <text x="800" y="490">Pin 1 · 3.3V</text>
+  </g>
+
+  <path class="wire" stroke="#7251b5" d="M315 149 H785"/>
+  <path class="wire" stroke="#e07a15" d="M315 199 H785"/>
+  <path class="wire" stroke="#2374ab" d="M315 249 H785"/>
+  <path class="wire" stroke="#2a9d58" d="M315 299 H785"/>
+  <path class="wire" stroke="#9aa39f" stroke-dasharray="10 8" d="M315 349 H650"/>
+  <path class="wire" stroke="#222222" d="M315 399 H785"/>
+  <path class="wire" stroke="#d1495b" d="M315 449 H785"/>
+  <path class="wire" stroke="#c89b00" d="M315 484 H785"/>
+
+  <circle cx="315" cy="149" r="6" fill="#7251b5"/><circle cx="785" cy="149" r="6" fill="#7251b5"/>
+  <circle cx="315" cy="199" r="6" fill="#e07a15"/><circle cx="785" cy="199" r="6" fill="#e07a15"/>
+  <circle cx="315" cy="249" r="6" fill="#2374ab"/><circle cx="785" cy="249" r="6" fill="#2374ab"/>
+  <circle cx="315" cy="299" r="6" fill="#2a9d58"/><circle cx="785" cy="299" r="6" fill="#2a9d58"/>
+  <circle cx="315" cy="399" r="6" fill="#222222"/><circle cx="785" cy="399" r="6" fill="#222222"/>
+  <circle cx="315" cy="449" r="6" fill="#d1495b"/><circle cx="785" cy="449" r="6" fill="#d1495b"/>
+  <circle cx="315" cy="484" r="6" fill="#c89b00"/><circle cx="785" cy="484" r="6" fill="#c89b00"/>
+
+  <text class="note" x="550" y="535" text-anchor="middle">SPI mode 0 · CE0 · 1 MHz default · 3.3 V logic only</text>
+</svg>
