@@ -2,13 +2,13 @@
 #include <gpiod.h>
 #include <signal.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
 #define GPIO_CHIP "/dev/gpiochip0"
-#define PIR_GPIO 27
 
 #define LCD_RS 25
 #define LCD_ENABLE 24
@@ -16,6 +16,21 @@
 #define LCD_D5 17
 #define LCD_D6 18
 #define LCD_D7 22
+
+#define ROW_COUNT 4U
+#define COLUMN_COUNT 4U
+#define DEBOUNCE_SCANS 3U
+#define SCAN_INTERVAL_NS 10000000L
+#define ROW_SETTLE_NS 50000L
+
+static const unsigned int row_offsets[ROW_COUNT] = { 5, 6, 13, 19 };
+static const unsigned int column_offsets[COLUMN_COUNT] = { 12, 16, 20, 21 };
+static const char keymap[ROW_COUNT][COLUMN_COUNT] = {
+    { '1', '2', '3', 'A' },
+    { '4', '5', '6', 'B' },
+    { '7', '8', '9', 'C' },
+    { '*', '0', '#', 'D' },
+};
 
 static volatile sig_atomic_t running = 1;
 
@@ -108,16 +123,15 @@ static int lcd_init(struct gpiod_line_request *request)
     return 0;
 }
 
-static int lcd_show_detected(struct gpiod_line_request *request)
+static int lcd_show_text(struct gpiod_line_request *request, const char *text)
 {
-    static const char message[] = "OBJECT DETECTED";
     size_t index;
 
     if (lcd_command(request, 0x01) < 0)
         return -1;
 
-    for (index = 0; index < sizeof(message) - 1; index++) {
-        if (lcd_byte(request, (unsigned char)message[index], 1) < 0)
+    for (index = 0; text[index] != '\0' && index < 16U; index++) {
+        if (lcd_byte(request, (unsigned char)text[index], 1) < 0)
             return -1;
     }
 
@@ -126,7 +140,8 @@ static int lcd_show_detected(struct gpiod_line_request *request)
 
 static struct gpiod_line_request *request_lines(
     struct gpiod_chip *chip, const unsigned int *offsets, size_t count,
-    enum gpiod_line_direction direction, const char *consumer)
+    enum gpiod_line_direction direction, enum gpiod_line_value output_value,
+    enum gpiod_line_bias bias, const char *consumer)
 {
     struct gpiod_request_config *request_config = NULL;
     struct gpiod_line_config *line_config = NULL;
@@ -142,8 +157,10 @@ static struct gpiod_line_request *request_lines(
     if (gpiod_line_settings_set_direction(settings, direction) < 0)
         goto out;
     if (direction == GPIOD_LINE_DIRECTION_OUTPUT &&
-        gpiod_line_settings_set_output_value(
-            settings, GPIOD_LINE_VALUE_INACTIVE) < 0)
+        gpiod_line_settings_set_output_value(settings, output_value) < 0)
+        goto out;
+    if (direction == GPIOD_LINE_DIRECTION_INPUT &&
+        gpiod_line_settings_set_bias(settings, bias) < 0)
         goto out;
     if (gpiod_line_config_add_line_settings(
             line_config, offsets, count, settings) < 0)
@@ -159,16 +176,67 @@ out:
     return request;
 }
 
+static int scan_keypad(struct gpiod_line_request *rows,
+                       struct gpiod_line_request *columns, uint16_t *mask)
+{
+    unsigned int row;
+    unsigned int column;
+
+    *mask = 0;
+    for (row = 0; row < ROW_COUNT; row++) {
+        if (set_line(rows, row_offsets[row], 0) < 0 ||
+            sleep_ns(ROW_SETTLE_NS) < 0)
+            return -1;
+
+        for (column = 0; column < COLUMN_COUNT; column++) {
+            enum gpiod_line_value value =
+                gpiod_line_request_get_value(columns, column_offsets[column]);
+
+            if (value == GPIOD_LINE_VALUE_ERROR)
+                return -1;
+            if (value == GPIOD_LINE_VALUE_INACTIVE)
+                *mask |= (uint16_t)(1U << (row * COLUMN_COUNT + column));
+        }
+
+        if (set_line(rows, row_offsets[row], 1) < 0)
+            return -1;
+    }
+
+    return 0;
+}
+
+static int show_new_keys(struct gpiod_line_request *lcd, uint16_t new_keys)
+{
+    unsigned int index;
+
+    for (index = 0; index < ROW_COUNT * COLUMN_COUNT; index++) {
+        char message[] = "KEY: X";
+        char key;
+
+        if ((new_keys & (uint16_t)(1U << index)) == 0)
+            continue;
+
+        key = keymap[index / COLUMN_COUNT][index % COLUMN_COUNT];
+        message[5] = key;
+        if (lcd_show_text(lcd, message) < 0)
+            return -1;
+    }
+
+    return 0;
+}
+
 int main(void)
 {
     static const unsigned int lcd_offsets[] = {
         LCD_RS, LCD_ENABLE, LCD_D4, LCD_D5, LCD_D6, LCD_D7,
     };
-    static const unsigned int pir_offsets[] = { PIR_GPIO };
     struct gpiod_line_request *lcd_request = NULL;
-    struct gpiod_line_request *pir_request = NULL;
+    struct gpiod_line_request *row_request = NULL;
+    struct gpiod_line_request *column_request = NULL;
     struct gpiod_chip *chip = NULL;
-    int previous = -1;
+    uint16_t candidate_mask = 0;
+    uint16_t stable_mask = 0;
+    unsigned int candidate_scans = 0;
     int result = EXIT_FAILURE;
 
     signal(SIGINT, stop_running);
@@ -176,56 +244,77 @@ int main(void)
 
     chip = gpiod_chip_open(GPIO_CHIP);
     if (!chip) {
-        fprintf(stderr, "motion-display: cannot open %s: %s\n",
+        fprintf(stderr, "keypad-display: cannot open %s: %s\n",
                 GPIO_CHIP, strerror(errno));
         goto out;
     }
 
-    lcd_request = request_lines(chip, lcd_offsets,
-                                sizeof(lcd_offsets) / sizeof(lcd_offsets[0]),
-                                GPIOD_LINE_DIRECTION_OUTPUT, "motion-display-lcd");
+    lcd_request = request_lines(
+        chip, lcd_offsets, sizeof(lcd_offsets) / sizeof(lcd_offsets[0]),
+        GPIOD_LINE_DIRECTION_OUTPUT, GPIOD_LINE_VALUE_INACTIVE,
+        GPIOD_LINE_BIAS_AS_IS, "keypad-display-lcd");
     if (!lcd_request) {
-        fprintf(stderr, "motion-display: cannot request LCD GPIOs: %s\n",
+        fprintf(stderr, "keypad-display: cannot request LCD GPIOs: %s\n",
                 strerror(errno));
         goto out;
     }
 
-    pir_request = request_lines(chip, pir_offsets, 1,
-                                GPIOD_LINE_DIRECTION_INPUT, "motion-display-pir");
-    if (!pir_request) {
-        fprintf(stderr, "motion-display: cannot request PIR GPIO%d: %s\n",
-                PIR_GPIO, strerror(errno));
+    row_request = request_lines(
+        chip, row_offsets, ROW_COUNT, GPIOD_LINE_DIRECTION_OUTPUT,
+        GPIOD_LINE_VALUE_ACTIVE, GPIOD_LINE_BIAS_AS_IS, "keypad-display-rows");
+    if (!row_request) {
+        fprintf(stderr, "keypad-display: cannot request keypad rows: %s\n",
+                strerror(errno));
         goto out;
     }
 
-    if (lcd_init(lcd_request) < 0) {
-        fprintf(stderr, "motion-display: LCD initialization failed: %s\n",
+    column_request = request_lines(
+        chip, column_offsets, COLUMN_COUNT, GPIOD_LINE_DIRECTION_INPUT,
+        GPIOD_LINE_VALUE_INACTIVE, GPIOD_LINE_BIAS_PULL_UP,
+        "keypad-display-columns");
+    if (!column_request) {
+        fprintf(stderr, "keypad-display: cannot request keypad columns: %s\n",
+                strerror(errno));
+        goto out;
+    }
+
+    if (lcd_init(lcd_request) < 0 ||
+        lcd_show_text(lcd_request, "KEYPAD READY") < 0) {
+        fprintf(stderr, "keypad-display: LCD initialization failed: %s\n",
                 strerror(errno));
         goto out;
     }
 
     while (running) {
-        enum gpiod_line_value value =
-            gpiod_line_request_get_value(pir_request, PIR_GPIO);
+        uint16_t raw_mask;
 
-        if (value == GPIOD_LINE_VALUE_ERROR) {
-            fprintf(stderr, "motion-display: PIR read failed: %s\n",
+        if (scan_keypad(row_request, column_request, &raw_mask) < 0) {
+            fprintf(stderr, "keypad-display: keypad scan failed: %s\n",
                     strerror(errno));
             goto out;
         }
 
-        if ((int)value != previous) {
-            if (value == GPIOD_LINE_VALUE_ACTIVE) {
-                if (lcd_show_detected(lcd_request) < 0)
-                    goto lcd_error;
-            } else if (lcd_command(lcd_request, 0x01) < 0) {
-                goto lcd_error;
-            }
-            previous = (int)value;
+        if (raw_mask != candidate_mask) {
+            candidate_mask = raw_mask;
+            candidate_scans = 1;
+        } else if (candidate_scans < DEBOUNCE_SCANS) {
+            candidate_scans++;
         }
 
-        if (sleep_ns(100000000L) < 0) {
-            fprintf(stderr, "motion-display: sleep failed: %s\n",
+        if (candidate_scans == DEBOUNCE_SCANS &&
+            candidate_mask != stable_mask) {
+            uint16_t new_keys = candidate_mask & (uint16_t)~stable_mask;
+
+            stable_mask = candidate_mask;
+            if (show_new_keys(lcd_request, new_keys) < 0) {
+                fprintf(stderr, "keypad-display: LCD write failed: %s\n",
+                        strerror(errno));
+                goto out;
+            }
+        }
+
+        if (sleep_ns(SCAN_INTERVAL_NS) < 0) {
+            fprintf(stderr, "keypad-display: sleep failed: %s\n",
                     strerror(errno));
             goto out;
         }
@@ -233,12 +322,10 @@ int main(void)
 
     (void)lcd_command(lcd_request, 0x01);
     result = EXIT_SUCCESS;
-    goto out;
 
-lcd_error:
-    fprintf(stderr, "motion-display: LCD write failed: %s\n", strerror(errno));
 out:
-    gpiod_line_request_release(pir_request);
+    gpiod_line_request_release(column_request);
+    gpiod_line_request_release(row_request);
     gpiod_line_request_release(lcd_request);
     gpiod_chip_close(chip);
     return result;

@@ -1,10 +1,10 @@
 [Unit]
-Description=HC-SR501 motion display monitor
+Description=4x4 matrix keypad display monitor
 After=local-fs.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/motion-display
+ExecStart=/usr/bin/keypad-display
 Restart=on-failure
 RestartSec=2
 

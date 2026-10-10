@@ -15,7 +15,7 @@ IMAGE_INSTALL:append = " \
     libgpiod-tools \
     libubootenv-bin \
     mfrc522-tool \
-    motion-display \
+    keypad-display \
     python3 \
     rauc \
     rauc-health \

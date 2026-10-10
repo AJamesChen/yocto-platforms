@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="570" viewBox="0 0 1100 570" role="img" aria-labelledby="title desc">
+  <title id="title">4x4 matrix keypad to Raspberry Pi 4B wiring schematic</title>
+  <desc id="desc">Four keypad rows connect to GPIO5, GPIO6, GPIO13, and GPIO19. Four keypad columns connect to GPIO12, GPIO16, GPIO20, and GPIO21.</desc>
+  <style>
+    text { font-family: system-ui, sans-serif; fill: #17201d; }
+    .box { fill: #f7faf8; stroke: #176b4d; stroke-width: 3; rx: 18; }
+    .heading { font-size: 28px; font-weight: 700; }
+    .pin { font-size: 18px; font-weight: 600; }
+    .note { font-size: 17px; fill: #63706a; }
+    .wire { fill: none; stroke-width: 4; }
+  </style>
+  <rect width="1100" height="570" fill="#ffffff"/>
+  <rect class="box" x="55" y="55" width="300" height="450"/>
+  <rect class="box" x="745" y="55" width="300" height="450"/>
+  <text class="heading" x="205" y="100" text-anchor="middle">4x4 Keypad</text>
+  <text class="heading" x="895" y="100" text-anchor="middle">Raspberry Pi 4B</text>
+
+  <g class="pin">
+    <text x="300" y="150" text-anchor="end">R1</text>
+    <text x="300" y="195" text-anchor="end">R2</text>
+    <text x="300" y="240" text-anchor="end">R3</text>
+    <text x="300" y="285" text-anchor="end">R4</text>
+    <text x="300" y="345" text-anchor="end">C1</text>
+    <text x="300" y="390" text-anchor="end">C2</text>
+    <text x="300" y="435" text-anchor="end">C3</text>
+    <text x="300" y="480" text-anchor="end">C4</text>
+
+    <text x="800" y="150">Pin 29 · GPIO5</text>
+    <text x="800" y="195">Pin 31 · GPIO6</text>
+    <text x="800" y="240">Pin 33 · GPIO13</text>
+    <text x="800" y="285">Pin 35 · GPIO19</text>
+    <text x="800" y="345">Pin 32 · GPIO12</text>
+    <text x="800" y="390">Pin 36 · GPIO16</text>
+    <text x="800" y="435">Pin 38 · GPIO20</text>
+    <text x="800" y="480">Pin 40 · GPIO21</text>
+  </g>
+
+  <path class="wire" stroke="#7251b5" d="M315 144 H785"/>
+  <path class="wire" stroke="#e07a15" d="M315 189 H785"/>
+  <path class="wire" stroke="#2374ab" d="M315 234 H785"/>
+  <path class="wire" stroke="#2a9d58" d="M315 279 H785"/>
+  <path class="wire" stroke="#d1495b" d="M315 339 H785"/>
+  <path class="wire" stroke="#c89b00" d="M315 384 H785"/>
+  <path class="wire" stroke="#00838f" d="M315 429 H785"/>
+  <path class="wire" stroke="#795548" d="M315 474 H785"/>
+
+  <g>
+    <circle cx="315" cy="144" r="6" fill="#7251b5"/><circle cx="785" cy="144" r="6" fill="#7251b5"/>
+    <circle cx="315" cy="189" r="6" fill="#e07a15"/><circle cx="785" cy="189" r="6" fill="#e07a15"/>
+    <circle cx="315" cy="234" r="6" fill="#2374ab"/><circle cx="785" cy="234" r="6" fill="#2374ab"/>
+    <circle cx="315" cy="279" r="6" fill="#2a9d58"/><circle cx="785" cy="279" r="6" fill="#2a9d58"/>
+    <circle cx="315" cy="339" r="6" fill="#d1495b"/><circle cx="785" cy="339" r="6" fill="#d1495b"/>
+    <circle cx="315" cy="384" r="6" fill="#c89b00"/><circle cx="785" cy="384" r="6" fill="#c89b00"/>
+    <circle cx="315" cy="429" r="6" fill="#00838f"/><circle cx="785" cy="429" r="6" fill="#00838f"/>
+    <circle cx="315" cy="474" r="6" fill="#795548"/><circle cx="785" cy="474" r="6" fill="#795548"/>
+  </g>
+
+  <text class="note" x="550" y="535" text-anchor="middle">Passive switch matrix · no VCC or GND · column pull-ups enabled in software</text>
+</svg>
