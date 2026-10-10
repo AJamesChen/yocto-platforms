@@ -179,6 +179,8 @@ See [MFRC522 RFID reader](docs/mfrc522.md) for the SPI wiring schematic,
 device-tree integration, and UID/MIFARE Classic read-write commands.
 See [HD44780 character LCD](docs/hd44780.md) for the verified parallel wiring,
 libgpiod test procedure, and GPIO25 sharing restriction.
+See [HC-SR501 motion display](docs/hc-sr501.md) for PIR sensor wiring and the
+service that shows an object-detected message on the LCD.
 
 `debug-tweaks` permits development-oriented access, including an empty root
 password. Remove `debug-tweaks` and review the SSH configuration in
