@@ -28,7 +28,7 @@ not sent to the browser.
 The **Camera** tab displays the V420 feed from `/dev/video0`. Use **Play video**
 to start the MJPEG stream, **Stop playback** to release the camera, and **Snap
 picture** to capture and download a 640x480 JPEG. The service runs with the
-supplementary `video` group and uses `v4l2-ctl` for capture.
+supplementary `video` group and supports both `v4l2-ctl` and GStreamer capture.
 
 The camera controls are also available through the authenticated REST API:
 
@@ -94,7 +94,25 @@ Runtime settings live in `/etc/default/device-web`. The defaults connect to the
 OTA API at `127.0.0.1:8080`, listen for web connections on port `8081`, and
 accept firmware bundles up to 384 MiB. Camera settings are controlled by
 `DEVICE_WEB_CAMERA_DEVICE`, `DEVICE_WEB_CAMERA_WIDTH`,
-`DEVICE_WEB_CAMERA_HEIGHT`, and `DEVICE_WEB_CAMERA_FPS`.
+`DEVICE_WEB_CAMERA_HEIGHT`, and `DEVICE_WEB_CAMERA_FPS`. Set
+`DEVICE_WEB_CAMERA_BACKEND` to `v4l2` (the default) or `gstreamer`. The REST
+camera status response includes the selected backend.
+
+The GStreamer backend uses the camera's native MJPEG output without a decode
+and re-encode step:
+
+```sh
+gst-launch-1.0 -q v4l2src device=/dev/video0 io-mode=mmap \
+  ! 'image/jpeg,width=640,height=480,framerate=15/1' \
+  ! fdsink fd=1 sync=false
+```
+
+The image includes the GStreamer command-line tools and `v4l2src` plugin.
+After changing the backend in `/etc/default/device-web`, restart the service:
+
+```sh
+systemctl restart device-web.service
+```
 
 The default password and MAC-derived OTA token are development credentials.
 Before using an untrusted network, change both credentials, terminate TLS in

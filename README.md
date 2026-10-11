@@ -155,7 +155,7 @@ layers/meta-jamesc/recipes-core/     Project image recipes
 scripts/setup-rpi4b.sh               Checkout and configure the build
 scripts/build-rpi4b.sh               Build an image target
 scripts/shell-rpi4b.sh               Open the configured BitBake shell
-scripts/flash-ota-rpi4b.sh           Upload and install a signed OTA bundle
+scripts/flash-ota-rpi4b.sh           Upload/install OTA with transfer and RAUC progress
 scripts/test-hd44780-rpi4b.sh        Exercise an HD44780 LCD through libgpiod
 build/rpi4b/                          Generated sources, caches, and build output
 ```

@@ -87,6 +87,10 @@ uploads the default deploy artifact, waits for RAUC, and optionally reboots:
 ./scripts/flash-ota-rpi4b.sh --reboot PI_ADDRESS
 ```
 
+The helper displays upload percentage and transfer rate, then prints RAUC
+installation state and elapsed time every two seconds. This makes long uploads
+and root-filesystem writes visible instead of appearing stalled.
+
 See [REST API for system information and OTA updates](ota-rest-api.md) for the
 manual commands and script options.
 

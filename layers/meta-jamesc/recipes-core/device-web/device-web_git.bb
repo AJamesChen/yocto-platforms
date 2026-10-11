@@ -6,12 +6,17 @@ LIC_FILES_CHKSUM = "file://src/${GO_IMPORT}/LICENSE;md5=28ebbb63d463670ad7108315
 
 PV = "1.0+git"
 SRC_URI = "git://github.com/AJamesChen/device-web.git;branch=main;protocol=https"
-SRCREV = "89b5b779a37dd3c98ed448c9511963c360ec2cc1"
+SRCREV = "bcd43b9fe7eb8d5e7b97d7d946b9d8556ef1c6bb"
 
 GO_IMPORT = "github.com/AJamesChen/device-web"
 GO_INSTALL = "${GO_IMPORT}/cmd/device-web"
 
-RDEPENDS:${PN} = "jamesc-ota-api v4l-utils"
+RDEPENDS:${PN} = " \
+    jamesc-ota-api \
+    v4l-utils \
+    gstreamer1.0 \
+    gstreamer1.0-plugins-good-video4linux2 \
+"
 
 inherit go-mod systemd
 

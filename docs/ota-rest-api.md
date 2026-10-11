@@ -18,6 +18,9 @@ optional reboot workflow. First build the signed update bundle, then run:
 By default the script reads the development OTA token from the device over SSH.
 Pass `--token TOKEN` (or set `OTA_API_TOKEN`) when that is not appropriate. Run
 `./scripts/flash-ota-rpi4b.sh --help` for bundle, port, and timeout options.
+The script prints the bundle size and an explicit curl upload progress bar,
+then reports the RAUC state, elapsed time, received bytes, and exit code every
+two seconds until installation succeeds or fails.
 
 The commands below show the equivalent workflow step by step.
 

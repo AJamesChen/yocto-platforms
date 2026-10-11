@@ -11,6 +11,7 @@ local_port=${OTA_LOCAL_PORT:-18081}
 poll_timeout=${OTA_POLL_TIMEOUT:-900}
 reboot=false
 tunnel_pid=
+upload_response=
 
 usage() {
     cat <<EOF
@@ -41,6 +42,9 @@ cleanup() {
     if [ -n "${tunnel_pid}" ]; then
         kill "${tunnel_pid}" 2>/dev/null || true
         wait "${tunnel_pid}" 2>/dev/null || true
+    fi
+    if [ -n "${upload_response}" ]; then
+        rm -f "${upload_response}"
     fi
 }
 
@@ -141,11 +145,20 @@ while ! curl --silent --show-error --fail "${api_url}/health" >/dev/null 2>&1; d
 done
 
 echo "Uploading $(basename -- "${bundle}")..."
-curl --show-error --fail-with-body \
+bundle_bytes=$(wc -c < "${bundle}" | tr -d ' ')
+bundle_size=$(python3 -c 'import sys; print(f"{int(sys.argv[1]) / 1048576:.1f} MiB")' "${bundle_bytes}")
+upload_response=$(mktemp "${TMPDIR:-/tmp}/flash-ota-response.XXXXXX") || fail "cannot create upload response file"
+echo "Bundle size: ${bundle_size} (${bundle_bytes} bytes)"
+if ! curl --show-error --fail-with-body --progress-bar \
+    --output "${upload_response}" \
     -H "Authorization: Bearer ${token}" \
     -H "Content-Type: application/octet-stream" \
     --data-binary "@${bundle}" \
-    "${api_url}/update"
+    "${api_url}/update"; then
+    cat "${upload_response}" >&2
+    fail "bundle upload failed"
+fi
+echo "Upload response: $(cat "${upload_response}")"
 
 echo "Waiting for RAUC installation to finish..."
 started_at=$(date +%s)
@@ -153,8 +166,18 @@ while :; do
     status=$(curl --silent --show-error --fail \
         -H "Authorization: Bearer ${token}" \
         "${api_url}/update")
-    state=$(printf '%s' "${status}" | python3 -c 'import json, sys; print(json.load(sys.stdin)["state"])') || fail "invalid OTA status response: ${status}"
-    echo "OTA status: ${status}"
+    status_fields=$(printf '%s' "${status}" | python3 -c '
+import json, sys
+data = json.load(sys.stdin)
+print(data["state"], data.get("bytes_received", 0), data.get("exit_code", "-"))
+') || fail "invalid OTA status response: ${status}"
+    set -- ${status_fields}
+    state=$1
+    bytes_received=$2
+    exit_code=$3
+    now=$(date +%s)
+    elapsed=$((now - started_at))
+    echo "RAUC progress: state=${state} elapsed=${elapsed}s received=${bytes_received}/${bundle_bytes} bytes exit_code=${exit_code}"
 
     case ${state} in
         succeeded) break ;;
@@ -163,8 +186,7 @@ while :; do
         *) fail "unexpected OTA state: ${state}" ;;
     esac
 
-    now=$(date +%s)
-    [ $((now - started_at)) -lt "${poll_timeout}" ] || fail "timed out waiting for RAUC installation"
+    [ "${elapsed}" -lt "${poll_timeout}" ] || fail "timed out waiting for RAUC installation"
     sleep 2
 done
 
