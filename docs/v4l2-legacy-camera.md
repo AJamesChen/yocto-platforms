@@ -59,13 +59,15 @@ scp scripts/test-v4l2-camera-rpi4b.sh root@PI_ADDRESS:/tmp/
 ssh root@PI_ADDRESS /tmp/test-v4l2-camera-rpi4b.sh
 scp root@PI_ADDRESS:/tmp/v4l2-camera-test.jpg .
 scp root@PI_ADDRESS:/tmp/gstreamer-camera-test.jpg .
+scp root@PI_ADDRESS:/tmp/gstreamer-camera-osd-test.jpg .
 ```
 
 The script verifies the boot configuration, loads the driver, prints the V4L2
 device information, and captures one 640x480 JPEG frame through each of
-`v4l2-ctl` and GStreamer. A successful result reports both output paths and
-non-zero byte counts. If `device-web.service` is active, the script temporarily
-stops it for exclusive camera access and restores it on exit.
+`v4l2-ctl`, native GStreamer pass-through, and a GStreamer `textoverlay`
+decode/overlay/encode pipeline. A successful result reports all three output
+paths and non-zero byte counts. If `device-web.service` is active, the script
+temporarily stops it for exclusive camera access and restores it on exit.
 
 ## Validated result
 
@@ -81,7 +83,7 @@ grep -E '^(start_x|gpu_mem|camera_auto_detect)=' /boot/config.txt
 lsmod | grep bcm2835_v4l2
 v4l2-ctl --list-devices
 v4l2-ctl --device=/dev/video0 --all
-gst-inspect-1.0 v4l2src
+gst-inspect-1.0 v4l2src textoverlay jpegdec jpegenc videoconvert
 gst-launch-1.0 -q v4l2src device=/dev/video0 io-mode=mmap num-buffers=1 \
   ! 'image/jpeg,width=640,height=480,framerate=15/1' \
   ! filesink location=/tmp/gstreamer-camera-test.jpg

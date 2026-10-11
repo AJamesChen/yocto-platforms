@@ -35,14 +35,16 @@ The camera controls are also available through the authenticated REST API:
 | Method | Endpoint | Response |
 | --- | --- | --- |
 | `GET` | `/api/camera` | State, device, resolution, and frame rate JSON |
+| `GET` | `/api/camera/settings` | OSD settings and backend capability JSON |
+| `PUT` | `/api/camera/settings` | Save OSD enable state, text, and font size |
 | `GET` | `/api/camera/stream` | Live multipart MJPEG stream |
 | `POST` | `/api/camera/stop` | Stop capture and release the device |
 | `POST` | `/api/camera/snapshot` | One `image/jpeg` frame |
 
-All four endpoints require the login session cookie. The `POST` endpoints also
-require the `csrf_token` returned by `GET /api/session` in an
+All endpoints require the login session cookie. The mutating `PUT` and `POST`
+endpoints also require the `csrf_token` returned by `GET /api/session` in an
 `X-CSRF-Token` header. Only one camera operation runs at a time; stop playback
-before requesting a snapshot from an API client.
+before requesting a snapshot or changing settings from an API client.
 
 Before starting an update, confirm that RAUC can access the shared U-Boot
 environment:
@@ -108,6 +110,23 @@ gst-launch-1.0 -q v4l2src device=/dev/video0 io-mode=mmap \
 ```
 
 The image includes the GStreamer command-line tools and `v4l2src` plugin.
+It also includes `textoverlay`, JPEG decode/encode, video conversion, and a
+font. The settings panel to the right of the live video controls a top-right
+OSD, with `MaxTV` as the default text and 20 as the default font size. Enabling
+the OSD changes the pipeline to:
+
+```sh
+... ! jpegdec ! videoconvert ! textoverlay text=MaxTV \
+  halignment=right valignment=top font-desc='Sans 20' xpad=12 ypad=12 \
+  ! jpegenc quality=90 ! fdsink fd=1 sync=false
+```
+
+The settings persist in `/var/lib/device-web/camera-settings.json` and apply
+to streams and snapshots. Disabling the OSD restores native JPEG pass-through.
+The web service parses complete JPEG segments, including frames that carry an
+embedded EXIF thumbnail, before writing each MJPEG part. The **Play video**
+action stops a stale capture first, so retrying playback releases and reopens
+the V4L2 device cleanly.
 After changing the backend in `/etc/default/device-web`, restart the service:
 
 ```sh
