@@ -9,6 +9,7 @@ bundle=${OTA_BUNDLE:-${default_bundle}}
 token=${OTA_API_TOKEN:-}
 local_port=${OTA_LOCAL_PORT:-18081}
 poll_timeout=${OTA_POLL_TIMEOUT:-900}
+ssh_known_hosts=${OTA_SSH_KNOWN_HOSTS:-}
 reboot=false
 tunnel_pid=
 upload_response=
@@ -28,8 +29,8 @@ options:
   --reboot        Reboot the device after a successful installation
   -h, --help      Show this help
 
-Environment equivalents: OTA_BUNDLE, OTA_API_TOKEN, OTA_LOCAL_PORT, and
-OTA_POLL_TIMEOUT (seconds).
+Environment equivalents: OTA_BUNDLE, OTA_API_TOKEN, OTA_LOCAL_PORT,
+OTA_POLL_TIMEOUT (seconds), and OTA_SSH_KNOWN_HOSTS (isolated known-hosts file).
 EOF
 }
 
@@ -45,6 +46,14 @@ cleanup() {
     fi
     if [ -n "${upload_response}" ]; then
         rm -f "${upload_response}"
+    fi
+}
+
+run_ssh() {
+    if [ -n "${ssh_known_hosts}" ]; then
+        command ssh -o UserKnownHostsFile="${ssh_known_hosts}" -o StrictHostKeyChecking=yes "$@"
+    else
+        command ssh "$@"
     fi
 }
 
@@ -116,7 +125,7 @@ command -v python3 >/dev/null 2>&1 || fail "python3 is required"
 
 if [ -z "${token}" ]; then
     echo "Reading the OTA token from ${ssh_target}..."
-    token=$(ssh "${ssh_target}" 'cat /data/ota/api-token') || fail "could not read the OTA token over SSH"
+    token=$(run_ssh "${ssh_target}" 'cat /data/ota/api-token') || fail "could not read the OTA token over SSH"
 fi
 token=$(printf '%s' "${token}" | tr '[:upper:]' '[:lower:]' | tr -d ':-')
 case ${token} in
@@ -127,7 +136,7 @@ esac
 trap cleanup EXIT HUP INT TERM
 
 echo "Opening an SSH tunnel through ${ssh_target} on local port ${local_port}..."
-ssh -4 -N -o ExitOnForwardFailure=yes \
+run_ssh -4 -N -o ExitOnForwardFailure=yes \
     -L "127.0.0.1:${local_port}:127.0.0.1:8080" \
     "${ssh_target}" &
 tunnel_pid=$!
