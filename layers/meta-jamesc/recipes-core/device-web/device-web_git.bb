@@ -1,17 +1,17 @@
-SUMMARY = "Web console for system information and RAUC firmware updates"
-DESCRIPTION = "Authenticated Go web service that displays device status and proxies firmware updates to jamesc-ota-api."
+SUMMARY = "Web console for system, camera, and RAUC firmware management"
+DESCRIPTION = "Authenticated Go web service that displays device status, controls the V4L2 camera, and proxies firmware updates to jamesc-ota-api."
 HOMEPAGE = "https://github.com/AJamesChen/device-web"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://src/${GO_IMPORT}/LICENSE;md5=28ebbb63d463670ad7108315ab40ca77"
 
 PV = "1.0+git"
 SRC_URI = "git://github.com/AJamesChen/device-web.git;branch=main;protocol=https"
-SRCREV = "3036955a11cb4b8c13c9f024a290185dbb65804b"
+SRCREV = "89b5b779a37dd3c98ed448c9511963c360ec2cc1"
 
 GO_IMPORT = "github.com/AJamesChen/device-web"
 GO_INSTALL = "${GO_IMPORT}/cmd/device-web"
 
-RDEPENDS:${PN} = "jamesc-ota-api"
+RDEPENDS:${PN} = "jamesc-ota-api v4l-utils"
 
 inherit go-mod systemd
 

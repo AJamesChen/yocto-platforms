@@ -10,6 +10,7 @@ IMAGE_INSTALL:append = " \
     curl \
     device-web \
     kernel-image \
+    kernel-module-bcm2835-v4l2 \
     jamesc-ota-api \
     libgpiod \
     libgpiod-tools \
@@ -21,6 +22,7 @@ IMAGE_INSTALL:append = " \
     rauc-health \
     u-boot-env \
     util-linux-findmnt \
+    v4l-utils \
 "
 
 # U-Boot reads the per-slot copy; do not also place a stale shared kernel on

@@ -25,6 +25,25 @@ single-file selection before upload. The web service forwards system and
 update requests to the loopback-only `jamesc-ota-api`; the OTA bearer token is
 not sent to the browser.
 
+The **Camera** tab displays the V420 feed from `/dev/video0`. Use **Play video**
+to start the MJPEG stream, **Stop playback** to release the camera, and **Snap
+picture** to capture and download a 640x480 JPEG. The service runs with the
+supplementary `video` group and uses `v4l2-ctl` for capture.
+
+The camera controls are also available through the authenticated REST API:
+
+| Method | Endpoint | Response |
+| --- | --- | --- |
+| `GET` | `/api/camera` | State, device, resolution, and frame rate JSON |
+| `GET` | `/api/camera/stream` | Live multipart MJPEG stream |
+| `POST` | `/api/camera/stop` | Stop capture and release the device |
+| `POST` | `/api/camera/snapshot` | One `image/jpeg` frame |
+
+All four endpoints require the login session cookie. The `POST` endpoints also
+require the `csrf_token` returned by `GET /api/session` in an
+`X-CSRF-Token` header. Only one camera operation runs at a time; stop playback
+before requesting a snapshot from an API client.
+
 Before starting an update, confirm that RAUC can access the shared U-Boot
 environment:
 
@@ -73,7 +92,9 @@ journalctl -u device-web.service
 
 Runtime settings live in `/etc/default/device-web`. The defaults connect to the
 OTA API at `127.0.0.1:8080`, listen for web connections on port `8081`, and
-accept firmware bundles up to 384 MiB.
+accept firmware bundles up to 384 MiB. Camera settings are controlled by
+`DEVICE_WEB_CAMERA_DEVICE`, `DEVICE_WEB_CAMERA_WIDTH`,
+`DEVICE_WEB_CAMERA_HEIGHT`, and `DEVICE_WEB_CAMERA_FPS`.
 
 The default password and MAC-derived OTA token are development credentials.
 Before using an untrusted network, change both credentials, terminate TLS in

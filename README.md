@@ -181,6 +181,8 @@ See [HD44780 character LCD](docs/hd44780.md) for the verified parallel wiring,
 libgpiod test procedure, and GPIO25 sharing restriction.
 See [4x4 matrix keypad](docs/keypad-4x4.md) for the eight-wire keypad wiring
 and the service that shows key presses on the LCD.
+See [legacy V4L2 camera](docs/v4l2-legacy-camera.md) for firmware enablement,
+driver checks, and a one-frame capture test through `/dev/video0`.
 
 `debug-tweaks` permits development-oriented access, including an empty root
 password. Remove `debug-tweaks` and review the SSH configuration in

@@ -16,9 +16,16 @@ local_conf_header:
     ENABLE_I2C = "1"
     ENABLE_SPI_BUS = "1"
 
+    # Legacy Raspberry Pi MMAL camera stack exposed through /dev/video0.
+    # VIDEO_CAMERA selects the start4x.elf firmware on Raspberry Pi 4. Do not
+    # load a sensor overlay as well: that belongs to the libcamera/Unicam path.
+    VIDEO_CAMERA = "1"
+    GPU_MEM = "128"
+    KERNEL_MODULE_AUTOLOAD += "bcm2835-v4l2"
+
     # MFRC522 RFID reader on SPI0 CE0 with reset on GPIO25. The standalone
     # overlay is copied to the shared FAT boot partition for new WIC images.
-    RPI_EXTRA_CONFIG = "dtoverlay=mfrc522"
+    RPI_EXTRA_CONFIG = "camera_auto_detect=0\ndtoverlay=mfrc522"
     RPI_EXTRA_IMAGE_BOOT_FILES:append = " mfrc522.dtbo;overlays/mfrc522.dtbo"
     EXTRA_IMAGEDEPENDS:append = " mfrc522-overlay"
 
