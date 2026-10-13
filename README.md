@@ -181,6 +181,9 @@ See [HD44780 character LCD](docs/hd44780.md) for the verified parallel wiring,
 libgpiod test procedure, and GPIO25 sharing restriction.
 See [4x4 matrix keypad](docs/keypad-4x4.md) for the eight-wire keypad wiring
 and the service that shows key presses on the LCD.
+See [ULN2003A stepper motor](docs/uln2003a.md) for pins 32/35/38/40, the
+device-tree driver, and direction/speed testing. This configuration disables
+the keypad service because those GPIOs are shared with the motor.
 See [legacy V4L2 camera](docs/v4l2-legacy-camera.md) for firmware enablement,
 driver checks, and a one-frame capture test through `/dev/video0`.
 

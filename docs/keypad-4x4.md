@@ -1,6 +1,10 @@
 # 4x4 matrix keypad with HD44780 display
 
-The project image runs `keypad-display.service`. It scans a passive eight-wire
+The project image includes `keypad-display.service`. The ULN2003A motor
+configuration disables its automatic startup because GPIO12/19/20/21 overlap
+the motor inputs. To use the keypad, disconnect the motor, remove
+`dtoverlay=uln2003a` from the boot configuration, reboot, and enable the keypad
+service with `systemctl enable --now keypad-display`. It scans a passive eight-wire
 4x4 matrix keypad and shows the most recently pressed key on the project's
 parallel HD44780 LCD. The supported layout is:
 
@@ -44,8 +48,10 @@ run at the same time with the current LCD wiring.
 ## Image integration
 
 The `keypad-display` recipe cross-compiles the libgpiod application, installs
-it as `/usr/bin/keypad-display`, and enables `keypad-display.service`. The
-service starts automatically at boot and restarts after a runtime failure.
+it as `/usr/bin/keypad-display`, and installs `keypad-display.service`.
+With the ULN2003A board configuration, the service is disabled at boot because
+the motor uses four of its GPIOs. Once the keypad is enabled as described
+above, it starts at boot and restarts after a runtime failure.
 
 Build the image and signed OTA bundle with:
 

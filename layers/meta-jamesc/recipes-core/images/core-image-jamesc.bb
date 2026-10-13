@@ -21,6 +21,8 @@ IMAGE_INSTALL:append = " \
     rauc \
     rauc-health \
     u-boot-env \
+    uln2003a \
+    uln2003a-test \
     util-linux-findmnt \
     v4l-utils \
 "

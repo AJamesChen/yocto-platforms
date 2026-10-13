@@ -25,9 +25,12 @@ local_conf_header:
 
     # MFRC522 RFID reader on SPI0 CE0 with reset on GPIO25. The standalone
     # overlay is copied to the shared FAT boot partition for new WIC images.
-    RPI_EXTRA_CONFIG = "camera_auto_detect=0\ndtoverlay=mfrc522"
-    RPI_EXTRA_IMAGE_BOOT_FILES:append = " mfrc522.dtbo;overlays/mfrc522.dtbo"
-    EXTRA_IMAGEDEPENDS:append = " mfrc522-overlay"
+    RPI_EXTRA_CONFIG = "camera_auto_detect=0\ndtoverlay=mfrc522\ndtoverlay=uln2003a"
+    RPI_EXTRA_IMAGE_BOOT_FILES:append = " mfrc522.dtbo;overlays/mfrc522.dtbo uln2003a.dtbo;overlays/uln2003a.dtbo"
+    EXTRA_IMAGEDEPENDS:append = " mfrc522-overlay uln2003a-overlay"
+
+    # Motor IN-A..D on pins 32/35/38/40 share the keypad GPIOs.
+    SYSTEMD_AUTO_ENABLE:pn-keypad-display = "disable"
 
     # Use U-Boot as RAUC's A/B boot chooser. The chosen rootfs is appended by
     # boot.cmd, so meta-raspberrypi must not bake a fixed root= into cmdline.txt.

@@ -24,6 +24,10 @@ board DTBs remain shared on the FAT boot partition and are outside OTA scope.
 The FAT mount also exposes `/boot/uboot.env` to `fw_printenv` and `fw_setenv`,
 which RAUC's U-Boot backend uses to select and confirm A/B slots.
 
+Peripheral updates that introduce a device-tree overlay need a separate boot
+partition change before reboot. See [ULN2003A stepper motor](uln2003a.md) for
+the overlay installation procedure and the verified slot A-to-B deployment.
+
 The initial SD-card image contains the same rootfs in slots A and B. It is a
 bootstrap image; later deployments use only the much smaller `.raucb` file.
 
