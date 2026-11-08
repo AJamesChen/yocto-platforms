@@ -1,8 +1,8 @@
 # yocto-platforms
 
 Reproducible Yocto build configurations and custom layers for embedded Linux
-platforms. Raspberry Pi 4 Model B is currently supported; STM32MP support is
-planned.
+platforms. Raspberry Pi 4 Model B and NVIDIA Jetson Orin Nano are supported;
+STM32MP support is planned.
 
 ## Raspberry Pi 4B
 
@@ -150,11 +150,17 @@ kas shell kas/rpi4b.yml
 ```text
 boards/rpi4b/kas.yml                 Raspberry Pi machine and image settings
 kas/rpi4b.yml                        Repositories, revisions, and enabled layers
+manifests/orin-nano.xml              Jetson repository manifest and revisions
+boards/orin-nano/conf-template/      Jetson local.conf and bblayers.conf templates
 layers/meta-jamesc/conf/layer.conf   Custom layer registration
+layers/meta-orin-nano/               Jetson product layer and image recipe
 layers/meta-jamesc/recipes-core/     Project image recipes
 scripts/setup-rpi4b.sh               Checkout and configure the build
 scripts/build-rpi4b.sh               Build an image target
 scripts/shell-rpi4b.sh               Open the configured BitBake shell
+scripts/setup-orin-nano.sh           Checkout and configure the Jetson build
+scripts/build-orin-nano.sh           Build the Jetson image target
+scripts/shell-orin-nano.sh           Open the configured Jetson BitBake shell
 scripts/flash-ota-rpi4b.sh           Upload/install OTA with transfer and RAUC progress
 scripts/test-hd44780-rpi4b.sh        Exercise an HD44780 LCD through libgpiod
 build/rpi4b/                          Generated sources, caches, and build output
@@ -187,9 +193,49 @@ the keypad service because those GPIOs are shared with the motor.
 See [legacy V4L2 camera](docs/v4l2-legacy-camera.md) for firmware enablement,
 driver checks, and a one-frame capture test through `/dev/video0`.
 
+## NVIDIA Jetson Orin Nano
+
+The Orin Nano configuration uses the Android `repo` tool to check out the
+Yocto Wrynose LTS branch (Yocto 6.0) and OE4T `meta-tegra`'s matching `wrynose`
+branch. That BSP branch targets Jetson Linux R39.2.1 / JetPack 7.2.1 and
+supports the Orin Nano devkit. The manifest also checks out this project into
+the workspace. Until this work is merged to `main`, the Orin Nano manifest and
+setup script use the `update-mfrc522` branch. The build configuration is seeded
+from `boards/orin-nano/conf-template` through `TEMPLATECONF`.
+
+The default machine, `jetson-orin-nano-devkit`, targets microSD root storage.
+For NVMe root storage, run setup first and change `MACHINE` in
+`build/orin-nano/build/conf/local.conf` to
+`jetson-orin-nano-devkit-nvme`.
+
+Prepare and build the image:
+
+```sh
+./scripts/setup-orin-nano.sh
+./scripts/build-orin-nano.sh
+```
+
+Install the Android `repo` tool and ensure it is on `PATH` before setup. The
+default target is `core-image-orin-nano`; another BitBake target can be passed
+as the sole argument. The configured output is a `.tegraflash-tar.zst` package
+under `build/orin-nano/build/tmp/deploy/images/<machine>/`. R39 flashing uses
+the package's `initrd-flash` script while the devkit is in Force Recovery mode;
+see the [`meta-tegra` flashing guide](https://github.com/OE4T/meta-tegra/blob/wrynose/docs/Flashing.md)
+for host prerequisites and the complete procedure. Open a configured build
+shell with:
+
+```sh
+./scripts/shell-orin-nano.sh
+```
+
+The starter product layer is `layers/meta-orin-nano`. Its image recipe is
+intentionally small and enables OpenSSH; add application and board-specific
+packages there as requirements are established. The template enables
+`debug-tweaks` for development, which must be removed for production.
+
 `debug-tweaks` permits development-oriented access, including an empty root
-password. Remove `debug-tweaks` and review the SSH configuration in
-`boards/rpi4b/kas.yml` before producing a production image.
+password. Remove `debug-tweaks` from the applicable board configuration and
+review SSH access before producing a production image.
 
 [kas-install]: https://kas.readthedocs.io/en/latest/userguide/getting-started.html
 [yocto-requirements]: https://docs.yoctoproject.org/scarthgap/ref-manual/system-requirements.html

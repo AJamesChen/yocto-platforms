@@ -1,0 +1,12 @@
+POKY_BBLAYERS_CONF_VERSION = "2"
+
+BBPATH = "${TOPDIR}"
+BBFILES ?= ""
+
+BBLAYERS ?= " \
+  ${TOPDIR}/../src/poky/meta \
+  ${TOPDIR}/../src/poky/meta-poky \
+  ${TOPDIR}/../src/poky/meta-yocto-bsp \
+  ${TOPDIR}/../src/meta-tegra \
+  ${TOPDIR}/../src/yocto-platforms/layers/meta-orin-nano \
+"

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <remote name="yocto" fetch="https://git.yoctoproject.org/" />
+  <remote name="github" fetch="https://github.com/" />
+  <default remote="yocto" revision="wrynose" sync-j="4" />
+
+  <project name="poky" path="poky" />
+  <project name="OE4T/meta-tegra" path="meta-tegra" remote="github" />
+  <project name="AJamesChen/yocto-platforms" path="yocto-platforms"
+           remote="github" revision="update-mfrc522" />
+</manifest>
