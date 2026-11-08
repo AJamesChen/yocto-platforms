@@ -11,7 +11,7 @@ CONFFILES:${PN} = "${sysconfdir}/systemd/network/20-wired.network"
 
 do_install() {
     install -d ${D}${sysconfdir}/systemd/network
-    install -m 0644 ${WORKDIR}/20-wired.network ${D}${sysconfdir}/systemd/network/20-wired.network
+    install -m 0644 ${UNPACKDIR}/20-wired.network ${D}${sysconfdir}/systemd/network/20-wired.network
 }
 
 FILES:${PN} = "${sysconfdir}/systemd/network/20-wired.network"
