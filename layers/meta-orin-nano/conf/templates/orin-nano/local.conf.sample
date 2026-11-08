@@ -9,6 +9,7 @@ INIT_MANAGER = "systemd"
 # and NVIDIA UEFI capsule updates.
 INHERIT += "mender-full tegra-mender-classic"
 MENDER_ARTIFACT_NAME = "${IMAGE_NAME}"
+MENDER_FEATURES_DISABLE:append = " mender-uboot"
 USE_REDUNDANT_FLASH_LAYOUT_DEFAULT = "1"
 UBOOT_EXTLINUX = "1"
 

@@ -238,9 +238,10 @@ removed for production.
 
 The Orin Nano template also enables Mender's classic A/B update scheme using
 the Wrynose `meta-mender`, `meta-mender-community`, and `meta-openembedded`
-layers. It emits a
-`.mender` rootfs update artifact and uses the Tegra-specific integration to
-coordinate rootfs slots with NVIDIA's UEFI boot control. The initial
+layers. It emits a `.mender` rootfs update artifact and uses the Tegra-specific
+integration to coordinate rootfs slots with NVIDIA's UEFI boot control; Mender's
+generic U-Boot integration is disabled because Tegra supplies its own slot
+control. The initial
 `.tegraflash-tar.zst` image creates the required redundant partition layout;
 installing it replaces the existing storage contents. The build does not
 flash the board or enroll it with a Mender server. Set `MENDER_SERVER_URL`
