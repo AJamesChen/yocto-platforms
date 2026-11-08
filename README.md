@@ -233,11 +233,13 @@ shell with:
 The starter product layer is `layers/meta-orin-nano`. Its image recipe is
 intentionally small and enables OpenSSH; add application and board-specific
 packages there as requirements are established. The template enables
-`debug-tweaks` for development, which must be removed for production.
+`empty-root-password` and `allow-root-login` for development, which must be
+removed for production.
 
-`debug-tweaks` permits development-oriented access, including an empty root
-password. Remove `debug-tweaks` from the applicable board configuration and
-review SSH access before producing a production image.
+The Raspberry Pi Scarthgap configuration uses `debug-tweaks`; the Orin Nano
+Wrynose configuration uses `empty-root-password` and `allow-root-login`.
+Remove the applicable development features and review SSH access before
+producing a production image.
 
 [kas-install]: https://kas.readthedocs.io/en/latest/userguide/getting-started.html
 [yocto-requirements]: https://docs.yoctoproject.org/scarthgap/ref-manual/system-requirements.html
