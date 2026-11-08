@@ -236,6 +236,18 @@ packages there as requirements are established. The template enables
 `empty-root-password` and `allow-root-login` for development, which must be
 removed for production.
 
+The Orin Nano template also enables Mender's classic A/B update scheme using
+the Wrynose `meta-mender` and `meta-mender-community` layers. It emits a
+`.mender` rootfs update artifact and uses the Tegra-specific integration to
+coordinate rootfs slots with NVIDIA's UEFI boot control. The initial
+`.tegraflash-tar.zst` image creates the required redundant partition layout;
+installing it replaces the existing storage contents. The build does not
+flash the board or enroll it with a Mender server. Set `MENDER_SERVER_URL`
+before enrollment, and validate rollback on the target hardware before
+production use. See the upstream [Mender Tegra integration
+guide](https://github.com/mendersoftware/meta-mender-community/tree/wrynose/meta-mender-tegra)
+for the update scheme details.
+
 The Raspberry Pi Scarthgap configuration uses `debug-tweaks`; the Orin Nano
 Wrynose configuration uses `empty-root-password` and `allow-root-login`.
 Remove the applicable development features and review SSH access before
