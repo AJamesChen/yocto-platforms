@@ -236,7 +236,10 @@ interfaces named `eth*` or `en*`. Connect the board to a DHCP-enabled network
 to get an address for SSH; this image has no desktop. Add application and
 board-specific packages there as requirements are established. Its UEFI
 extlinux configuration selects 1920x1080 at 60 Hz on `DP-1` so the console
-remains readable on a 4K monitor. The template enables
+remains readable on a 4K monitor. The image also selects NVIDIA's dual-IMX219
+device-tree overlay and includes the `nv_imx219` kernel module for stereo camera
+modules connected to both CSI ports; see the
+[dual IMX219 camera guide](docs/jetson-imx219-dual-camera.md). The template enables
 `empty-root-password` and `allow-root-login` for development, which must be
 removed for production.
 
