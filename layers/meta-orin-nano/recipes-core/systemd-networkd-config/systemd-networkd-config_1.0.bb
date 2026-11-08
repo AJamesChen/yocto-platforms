@@ -5,7 +5,6 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda
 inherit allarch
 
 SRC_URI = "file://20-wired.network"
-S = "${WORKDIR}"
 
 RDEPENDS:${PN} = "systemd-networkd"
 CONFFILES:${PN} = "${sysconfdir}/systemd/network/20-wired.network"
