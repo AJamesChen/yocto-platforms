@@ -18,7 +18,7 @@ cd "${src_dir}"
 repo init -u "${manifest_url}" -b update-mfrc522 -m manifests/orin-nano.xml
 repo sync
 
-cd "${src_dir}/poky"
+cd "${src_dir}/openembedded-core"
 TEMPLATECONF="${src_dir}/yocto-platforms/boards/orin-nano/conf-template" \
     . ./oe-init-build-env "${build_dir}"
 

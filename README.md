@@ -196,12 +196,14 @@ driver checks, and a one-frame capture test through `/dev/video0`.
 ## NVIDIA Jetson Orin Nano
 
 The Orin Nano configuration uses the Android `repo` tool to check out the
-Yocto Wrynose LTS branch (Yocto 6.0) and OE4T `meta-tegra`'s matching `wrynose`
-branch. That BSP branch targets Jetson Linux R39.2.1 / JetPack 7.2.1 and
-supports the Orin Nano devkit. The manifest also checks out this project into
-the workspace. Until this work is merged to `main`, the Orin Nano manifest and
-setup script use the `update-mfrc522` branch. The build configuration is seeded
-from `boards/orin-nano/conf-template` through `TEMPLATECONF`.
+Yocto Wrynose LTS (Yocto 6.0.4) from the aligned OpenEmbedded-Core, BitBake,
+and `meta-yocto` sources, plus OE4T `meta-tegra`'s `wrynose` branch. That BSP
+branch targets Jetson Linux R39.2.1 / JetPack 7.2.1 and supports the Orin Nano
+devkit. The source revisions are recorded in the manifest, which also checks
+out this project into the workspace. Until this work is merged to `main`, the
+Orin Nano manifest and setup script use the `update-mfrc522` branch. The build
+configuration is seeded from `boards/orin-nano/conf-template` through
+`TEMPLATECONF`.
 
 The default machine, `jetson-orin-nano-devkit`, targets microSD root storage.
 For NVMe root storage, run setup first and change `MACHINE` in

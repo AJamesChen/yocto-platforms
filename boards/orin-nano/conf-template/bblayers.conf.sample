@@ -4,9 +4,9 @@ BBPATH = "${TOPDIR}"
 BBFILES ?= ""
 
 BBLAYERS ?= " \
-  ${TOPDIR}/../src/poky/meta \
-  ${TOPDIR}/../src/poky/meta-poky \
-  ${TOPDIR}/../src/poky/meta-yocto-bsp \
+  ${TOPDIR}/../src/openembedded-core/meta \
+  ${TOPDIR}/../src/meta-yocto/meta-poky \
+  ${TOPDIR}/../src/meta-yocto/meta-yocto-bsp \
   ${TOPDIR}/../src/meta-tegra \
   ${TOPDIR}/../src/yocto-platforms/layers/meta-orin-nano \
 "

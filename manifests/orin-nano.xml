@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <manifest>
   <remote name="yocto" fetch="https://git.yoctoproject.org/" />
+  <remote name="oe" fetch="https://git.openembedded.org/" />
   <remote name="github" fetch="https://github.com/" />
-  <default remote="yocto" revision="wrynose" sync-j="4" />
+  <default remote="oe" revision="wrynose" sync-j="4" />
 
-  <project name="poky" path="poky" />
+  <project name="openembedded-core" path="openembedded-core"
+           revision="0f03c732a0a2d0506b41b1abe60b3f368b2300dc" />
+  <project name="bitbake" path="bitbake" remote="github"
+           revision="51fd94a67fa17650a9ff623492005972bbc7d26f" />
+  <project name="meta-yocto" path="meta-yocto" remote="yocto"
+           revision="7c25b11156553145fa6b241a2d4f65d94438f804" />
   <project name="OE4T/meta-tegra" path="meta-tegra" remote="github" />
   <project name="AJamesChen/yocto-platforms" path="yocto-platforms"
            remote="github" revision="update-mfrc522" />
