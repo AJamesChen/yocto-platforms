@@ -237,7 +237,8 @@ packages there as requirements are established. The template enables
 removed for production.
 
 The Orin Nano template also enables Mender's classic A/B update scheme using
-the Wrynose `meta-mender` and `meta-mender-community` layers. It emits a
+the Wrynose `meta-mender`, `meta-mender-community`, and `meta-openembedded`
+layers. It emits a
 `.mender` rootfs update artifact and uses the Tegra-specific integration to
 coordinate rootfs slots with NVIDIA's UEFI boot control. The initial
 `.tegraflash-tar.zst` image creates the required redundant partition layout;

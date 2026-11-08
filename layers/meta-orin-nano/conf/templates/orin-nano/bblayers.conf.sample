@@ -8,6 +8,7 @@ BBLAYERS ?= " \
   ${TOPDIR}/../src/meta-yocto/meta-poky \
   ${TOPDIR}/../src/meta-yocto/meta-yocto-bsp \
   ${TOPDIR}/../src/meta-tegra \
+  ${TOPDIR}/../src/meta-openembedded/meta-oe \
   ${TOPDIR}/../src/meta-mender/meta-mender-core \
   ${TOPDIR}/../src/meta-mender-community/meta-mender-tegra/meta-mender-tegra-common \
   ${TOPDIR}/../src/meta-mender-community/meta-mender-tegra/meta-mender-tegra-classic \

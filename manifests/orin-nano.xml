@@ -13,6 +13,8 @@
   <project name="meta-yocto" path="meta-yocto" remote="yocto"
            revision="7c25b11156553145fa6b241a2d4f65d94438f804" />
   <project name="OE4T/meta-tegra" path="meta-tegra" remote="github" />
+  <project name="openembedded/meta-openembedded" path="meta-openembedded"
+           remote="github" revision="wrynose" />
   <project name="mendersoftware/meta-mender" path="meta-mender" remote="github" revision="wrynose" />
   <project name="mendersoftware/meta-mender-community" path="meta-mender-community" remote="github" revision="wrynose" />
   <project name="AJamesChen/yocto-platforms" path="yocto-platforms"
