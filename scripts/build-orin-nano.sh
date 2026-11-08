@@ -1,5 +1,5 @@
 #!/bin/sh
-set -eu
+set -e
 
 script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 project_dir=$(CDPATH= cd -- "${script_dir}/.." && pwd)
