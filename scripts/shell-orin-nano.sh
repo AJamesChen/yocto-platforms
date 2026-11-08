@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 
 script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
