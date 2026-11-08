@@ -3,10 +3,6 @@
 MACHINE = "jetson-orin-nano-devkit"
 DISTRO = "poky"
 
-# Generate the deployable NVIDIA flashing bundle.
-IMAGE_CLASSES += "image_types_tegra"
-IMAGE_FSTYPES = "tegraflash"
-
 # Development convenience only; remove for production images.
 EXTRA_IMAGE_FEATURES += "empty-root-password allow-root-login"
 
