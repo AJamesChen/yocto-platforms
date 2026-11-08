@@ -23,7 +23,34 @@ example of a dual-sensor module.
 
 The overlay configures both camera interfaces as IMX219 sensors. Stereo vision
 applications and sensor synchronization are separate from kernel detection and
-are not configured by this image change.
+are not provided by the kernel driver itself.
+
+## Live preview and disparity preview
+
+The Orin Nano image includes `stereo-camera-viewer`, a small headless viewer
+that captures Argus sensors 0 and 1 and serves the feeds on the wired network.
+After booting an image that contains the viewer, open:
+
+```text
+http://<jetson-ip>:8080/
+```
+
+For example, with the board at `192.168.68.53`, use
+`http://192.168.68.53:8080/`. The page shows the left and right feeds plus an
+OpenCV StereoSGBM disparity visualization. The app requires both cameras and
+the NVIDIA Argus daemon; check it with:
+
+```sh
+systemctl status nvargus-daemon stereo-camera-viewer --no-pager
+journalctl -u stereo-camera-viewer -b --no-pager
+```
+
+The current disparity view is **not calibrated metric depth**. It is useful to
+confirm that both streams work and to see relative disparity on a static scene.
+Metric depth needs stereo calibration/rectification data and synchronized
+frames; moving objects may produce poor results if the sensors are not
+hardware-synchronized. The preview is served without authentication, so use it
+only on a trusted development network.
 
 ## Verify after boot
 

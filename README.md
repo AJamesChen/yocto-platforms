@@ -238,7 +238,8 @@ board-specific packages there as requirements are established. Its UEFI
 extlinux configuration selects 1920x1080 at 60 Hz on `DP-1` so the console
 remains readable on a 4K monitor. The image also selects NVIDIA's dual-IMX219
 device-tree overlay and includes the `nv_imx219` kernel module for stereo camera
-modules connected to both CSI ports; see the
+modules connected to both CSI ports. The image also runs a headless web viewer
+on port 8080 with left/right streams and a relative-disparity preview; see the
 [dual IMX219 camera guide](docs/jetson-imx219-dual-camera.md). The template enables
 `empty-root-password` and `allow-root-login` for development, which must be
 removed for production.
