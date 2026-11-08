@@ -2,6 +2,7 @@
 # For NVMe root storage, use jetson-orin-nano-devkit-nvme.
 MACHINE = "jetson-orin-nano-devkit"
 DISTRO = "poky"
+INIT_MANAGER = "systemd"
 
 # Mender classic OTA integration for JetPack 7 / meta-tegra Wrynose.
 # The community layer coordinates Mender rootfs A/B updates with nvbootctrl

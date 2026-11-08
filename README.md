@@ -244,8 +244,9 @@ coordinate rootfs slots with NVIDIA's UEFI boot control. The initial
 `.tegraflash-tar.zst` image creates the required redundant partition layout;
 installing it replaces the existing storage contents. The build does not
 flash the board or enroll it with a Mender server. Set `MENDER_SERVER_URL`
-before enrollment, and validate rollback on the target hardware before
-production use. See the upstream [Mender Tegra integration
+before enrollment. Mender requires systemd for its service-based updater.
+Validate rollback on the target hardware before production use. See the
+upstream [Mender Tegra integration
 guide](https://github.com/mendersoftware/meta-mender-community/tree/wrynose/meta-mender-tegra)
 for the update scheme details.
 
