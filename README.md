@@ -231,8 +231,12 @@ shell with:
 ```
 
 The starter product layer is `layers/meta-orin-nano`. Its image recipe is
-intentionally small and enables OpenSSH; add application and board-specific
-packages there as requirements are established. The template enables
+intentionally small and enables OpenSSH plus systemd-networkd DHCP for wired
+interfaces named `eth*` or `en*`. Connect the board to a DHCP-enabled network
+to get an address for SSH; this image has no desktop. Add application and
+board-specific packages there as requirements are established. Its UEFI
+extlinux configuration selects 1920x1080 at 60 Hz on `DP-1` so the console
+remains readable on a 4K monitor. The template enables
 `empty-root-password` and `allow-root-login` for development, which must be
 removed for production.
 
