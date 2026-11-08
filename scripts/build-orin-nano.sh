@@ -19,7 +19,7 @@ if [ ! -f "${src_dir}/openembedded-core/oe-init-build-env" ]; then
 fi
 
 cd "${src_dir}/openembedded-core"
-TEMPLATECONF="${src_dir}/yocto-platforms/boards/orin-nano/conf-template" \
+TEMPLATECONF="${src_dir}/yocto-platforms/layers/meta-orin-nano/conf/templates/orin-nano" \
     . ./oe-init-build-env "${build_dir}"
 
 bitbake "${target}"

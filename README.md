@@ -151,7 +151,7 @@ kas shell kas/rpi4b.yml
 boards/rpi4b/kas.yml                 Raspberry Pi machine and image settings
 kas/rpi4b.yml                        Repositories, revisions, and enabled layers
 manifests/orin-nano.xml              Jetson repository manifest and revisions
-boards/orin-nano/conf-template/      Jetson local.conf and bblayers.conf templates
+layers/meta-orin-nano/conf/templates/ Jetson build configuration template
 layers/meta-jamesc/conf/layer.conf   Custom layer registration
 layers/meta-orin-nano/               Jetson product layer and image recipe
 layers/meta-jamesc/recipes-core/     Project image recipes
@@ -202,8 +202,8 @@ branch targets Jetson Linux R39.2.1 / JetPack 7.2.1 and supports the Orin Nano
 devkit. The source revisions are recorded in the manifest, which also checks
 out this project into the workspace. Until this work is merged to `main`, the
 Orin Nano manifest and setup script use the `update-mfrc522` branch. The build
-configuration is seeded from `boards/orin-nano/conf-template` through
-`TEMPLATECONF`.
+configuration is seeded from
+`layers/meta-orin-nano/conf/templates/orin-nano` through `TEMPLATECONF`.
 
 The default machine, `jetson-orin-nano-devkit`, targets microSD root storage.
 For NVMe root storage, run setup first and change `MACHINE` in

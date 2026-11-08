@@ -19,7 +19,7 @@ repo init -u "${manifest_url}" -b update-mfrc522 -m manifests/orin-nano.xml
 repo sync
 
 cd "${src_dir}/openembedded-core"
-TEMPLATECONF="${src_dir}/yocto-platforms/boards/orin-nano/conf-template" \
+TEMPLATECONF="${src_dir}/yocto-platforms/layers/meta-orin-nano/conf/templates/orin-nano" \
     . ./oe-init-build-env "${build_dir}"
 
 echo "Yocto sources and build configuration are ready in ${work_dir}"
