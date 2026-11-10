@@ -2,6 +2,7 @@
 Description=Dual IMX219 stereo camera web preview
 After=network-online.target nvargus-daemon.service
 Wants=network-online.target nvargus-daemon.service
+RequiresMountsFor=/data
 
 [Service]
 Type=simple

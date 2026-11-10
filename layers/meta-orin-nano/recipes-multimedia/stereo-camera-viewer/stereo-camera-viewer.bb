@@ -1,4 +1,4 @@
-SUMMARY = "Headless dual CSI camera and stereo disparity viewer"
+SUMMARY = "Headless dual CSI camera calibration and metric depth viewer"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
@@ -14,6 +14,7 @@ RDEPENDS:${PN} = " \
     python3-netclient \
     python3-netserver \
     python3-threading \
+    python3-numpy \
     python3-opencv \
     tegra-argus-daemon \
     gstreamer1.0-plugins-nvarguscamerasrc \
