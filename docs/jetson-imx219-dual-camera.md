@@ -45,6 +45,18 @@ systemctl status nvargus-daemon stereo-camera-viewer --no-pager
 journalctl -u stereo-camera-viewer -b --no-pager
 ```
 
+To view the page through SSH without exposing port 8080 on the LAN, run this
+on the development machine and leave the SSH session open:
+
+```sh
+ssh -L 127.0.0.1:8080:127.0.0.1:8080 root@JETSON_IP
+```
+
+Then open `http://127.0.0.1:8080/` in the development machine's browser. This
+works only after booting the image that contains the `stereo-camera-viewer`
+service; an SSH tunnel cannot provide the viewer when the service is absent or
+stopped.
+
 The current disparity view is **not calibrated metric depth**. It is useful to
 confirm that both streams work and to see relative disparity on a static scene.
 Metric depth needs stereo calibration/rectification data and synchronized
@@ -67,6 +79,10 @@ modinfo nv_imx219
 dmesg | grep -iE 'imx219|tegra-capture|nvcsi'
 ls -l /dev/video*
 ```
+
+For CSI cameras, NVIDIA's Argus pipeline is the capture path used by the
+viewer. A missing `/dev/video*` glob alone is not enough to diagnose capture;
+check the Argus and viewer service status and logs, and try the browser preview.
 
 Both physical cameras must be connected for the dual overlay. If no camera is
 detected, check cable compatibility and orientation first, then inspect the

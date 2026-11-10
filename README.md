@@ -259,6 +259,19 @@ upstream [Mender Tegra integration
 guide](https://github.com/mendersoftware/meta-mender-community/tree/wrynose/meta-mender-tegra)
 for the update scheme details.
 
+For initial SD-card provisioning, extract the matching `.tegraflash-tar.zst`
+package into an empty directory. Connect the Orin Nano USB-C OTG port to the
+Linux host, enter Force Recovery mode, and run `sudo ./initrd-flash --qspi-only`
+from that directory to install the matching QSPI boot firmware. Then connect
+the SD card to the host and run `sudo ./dosdcard.sh /dev/sdX`, replacing
+`/dev/sdX` with the whole-card device identified with `lsblk` (not a partition
+such as `/dev/sdX1`). The SD-card script writes the boot and rootfs partitions,
+including `APP` and `APP_b`; it erases the selected card. Disable desktop
+automount or unmount any mounted card partitions first. Do not assume the card
+device name stays the same after reconnecting it. Wait for `[OK: /dev/sdX]`
+before removing the card. The `meta-tegra` [flashing guide](https://github.com/OE4T/meta-tegra/blob/wrynose/docs/Flashing.md)
+describes the package and recovery-mode requirements.
+
 The Raspberry Pi Scarthgap configuration uses `debug-tweaks`; the Orin Nano
 Wrynose configuration uses `empty-root-password` and `allow-root-login`.
 Remove the applicable development features and review SSH access before
